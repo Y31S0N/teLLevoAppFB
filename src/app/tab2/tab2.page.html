@@ -5,7 +5,7 @@
 </ion-header>
 
 <ng-container *ngIf="rol === 'conductor'">
-  <ion-content *ngIf="viaje2 !== undefined && viaje2.attributes.visible === true">
+  <ion-content *ngIf="viaje2 !== undefined && viaje2.visible === true">
     <ion-card>
       <h5 class="ion-margin">Información del viaje</h5>
       <ion-item>
@@ -46,7 +46,15 @@
       <h6 *ngIf="pasajeros.length === 0" class="ion-margin">
         Por ahora, no hay nadie aún...
       </h6>
-
+      <!-- ******************************************************************************************* -->
+      <div id="enMarcha" *ngIf="!disponible && visible">
+        <ion-card>
+          <p id="msgEnCurso">Viaje en curso</p>
+        </ion-card>
+        <img id="auto" src='../../assets/autoViaje.png'>
+        <img id="flecha" src='../../assets/flecha.png'>
+        <img id="casa" src='../../assets/casa.png'>
+      </div>
     
     <div class="ion-text-center" *ngIf="disponible">
       <ion-button id="iniciar" class="ion-margin" (click)="iniciarViaje()" fill="clear" shape="round">

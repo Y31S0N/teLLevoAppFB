@@ -13,7 +13,7 @@ export class StorageService {
   async init() {
     await this.storage.create();
   }
-  async guardar(id, value){
+  async guardar(id: string, value){
     await this.storage.set(id, value);
   }
   async gett(){

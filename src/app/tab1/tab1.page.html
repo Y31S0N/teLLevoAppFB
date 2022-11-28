@@ -11,10 +11,10 @@
       <ion-item class="rotate-hor-center" *ngFor="let lis of historialCon"
         [routerLink]="['../../detalle-viaje/', lis.id]">
         <ion-label>
-          <p id="hora">Hora salida: {{lis.attributes.hora}}</p>
-          <p id="destino">Destino: {{lis.attributes.destino}}</p>
-          <p id="costo">Costo: ${{lis.attributes.costo}}</p>
-          <p id="pago">Método de pago preferente: {{lis.attributes.pago | titlecase}}</p>
+          <p id="hora">Hora salida: {{lis.hora}}</p>
+          <p id="destino">Destino: {{lis.destino}}</p>
+          <p id="costo">Costo: ${{lis.costo}}</p>
+          <p id="pago">Método de pago preferente: {{lis.pago | titlecase}}</p>
         </ion-label>
       </ion-item>
     </ion-list>
@@ -36,12 +36,12 @@
     <ion-list *ngIf="listaViajes.length > 0">
       <ion-item class="rotate-hor-center" *ngFor="let lis of listaViajes"
         [routerLink]="['../../detalle-viaje/', lis.id]">
-        <ion-label *ngIf="lis.attributes.disponible">
+        <ion-label *ngIf="lis.disponible">
           <ion-label>
-            <p id="hora">Hora salida: {{lis.attributes.hora}}</p>
-            <p id="destino">Destino: {{lis.attributes.destino}}</p>
-            <p id="costo">Costo: ${{lis.attributes.costo}}</p>
-            <p id="pago">Método de pago preferente: {{lis.attributes.pago | titlecase}}</p>
+            <p id="hora">Hora salida: {{lis.hora}}</p>
+            <p id="destino">Destino: {{lis.destino}}</p>
+            <p id="costo">Costo: ${{lis.costo}}</p>
+            <p id="pago">Método de pago preferente: {{lis.pago | titlecase}}</p>
           </ion-label>
         </ion-label>
       </ion-item>

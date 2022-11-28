@@ -38,12 +38,12 @@ export class Tab1Page implements ViewWillEnter {
   }
   listarViajes() {
     for (const i of this.viajes) {
-      if (i.sesion === undefined) {
+      if (i.ide === undefined) {
         continue;
       }
-      else if (i.disponible === true && i.pasajeros.split(' ').length-1 < i.nAsientos) {
+      else if (i.disponible === true && i.pasajeros.length-1 < i.nAsientos) {
         this.listaViajes.push(i);
-      } else if (i.visible === false && this.user.sesion === i.idConductor) {
+      } else if (!i.visible && this.user.sesion === i.idConductor) {
         this.historialCon.push(i);
       }
     }

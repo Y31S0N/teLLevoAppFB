@@ -74,6 +74,10 @@ irHistorial(){
     this.router.navigate(['/login']);
   }
   async cambiarRol(){
+    const toast1 = await this.toastCtrl.create({
+      message: 'Cambio de rol exitoso',
+      duration: 2000
+    });
     // acá tomo al usuario de esta sesión en una variable
     if(await this.verifSiViaje()){
       if(this.user.rol === 'pasajero'){
@@ -85,11 +89,12 @@ irHistorial(){
           await this.service.guardar(this.user.sesion, this.user);
           // this.ps.updatePost('usuarios', this.userApi.id, {data: this.user});
           await this.fs.updateDoc('usuarios/', this.user.sesion, this.user);
-          const toast1 = await this.toastCtrl.create({
-            message: 'Cambio de rol exitoso',
-            duration: 2000
-          });
-          toast1.present();
+          setTimeout(() => {
+            this.cargarDatos();
+          }, 1200);
+          setTimeout(() => {
+            toast1.present();
+          }, 1200);
         }
       }else if(this.user.rol === 'conductor'){
         //ACÁ HAY QUE CAMBIAR EL ROL SOLAMENTE, EL CONDUCTOR YA TIENE AUTO
@@ -98,6 +103,12 @@ irHistorial(){
         await this.service.guardar(this.user.sesion, this.user);
         // this.ps.updatePost('usuarios', this.userApi.id, {data:this.user});
         await this.fs.updateDoc('usuarios/', this.user.sesion, this.user);
+        setTimeout(() => {
+          this.cargarDatos();
+        }, 1200);
+        setTimeout(() => {
+          toast1.present();
+        }, 1200);
       }
     }else{
       let msg: string;
@@ -131,8 +142,7 @@ irHistorial(){
         if(i.pasajeros === null || i.pasajeros === undefined){
           continue;
         }
-        const pas = i.pasajeros.split(' ');
-        for (const j of pas) {
+        for (const j of i.pasajeros) {
           if(j === this.user.sesion){
             doTrip = false;
           }

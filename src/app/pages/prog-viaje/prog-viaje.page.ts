@@ -117,7 +117,6 @@ export class ProgViajePage implements AfterViewInit {
       }
     }
     //acá va la validación del input del geocoder
-    //acá tengo que validar que el COSTO solo sea numérico
   }
   crearMarcador(lon, lat, mapa, pop) {
     new Marker({

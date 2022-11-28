@@ -42,7 +42,7 @@ export class Tab2Page implements ViewWillEnter {
   ionViewWillEnter() {
     setTimeout(() => {
       this.cargarDatos();
-    }, 1000);
+    }, 1400);
   }
   async cargarDatos(){
     this.user = await this.service.gett();
@@ -51,16 +51,11 @@ export class Tab2Page implements ViewWillEnter {
     if (this.rol === 'conductor') {
       const viaje = await this.getViajeConductor();
       if (viaje !== undefined) {
-        this.viaje2 = viaje;
-        this.pasaj = await viaje.pasajeros.split(' ');
-        console.log(this.viaje2);
-        this.pasaj.pop();
-        console.log(this.pasaj);
+        this.viaje2=viaje;
         //necesito la info de estos pasajeros, podría dejarlos dentro de un nuevo array, que tenga a todos los datos de cada pasajero
         for await (const i of this.usuarios) {
-          for await (const j of this.pasaj) {
+          for await (const j of this.viaje2.pasajeros) {
             if(j === i.sesion){
-              console.log(j);
               this.pasajeros.push(i);
             }
           }
@@ -117,8 +112,7 @@ export class Tab2Page implements ViewWillEnter {
         if(i.pasajeros === null || i.pasajeros === undefined){
           continue;
         }
-        const pasajeros = i.pasajeros.split(' ');
-        for (const j of pasajeros) {
+        for (const j of i.pasajeros) {
           //SI EL SESION DEL PASAJERO, ES EL MISMO DEL USUARIO ACTUAL Y, EL VIAJE ESTÁ VISIBLE
           if (j === this.user.sesion && i.visible === true) {
             return i;
@@ -159,35 +153,40 @@ export class Tab2Page implements ViewWillEnter {
   }
   async iniciarViaje() {
     for await (const i of this.viajes) {
-      console.log('Id conductor => ',i.idConductor);
-      console.log('Ses.sesion => ',this.ses);
       if (i.idConductor !== undefined) {
         if (this.ses === i.idConductor) {
           const vLimbo = i;
           vLimbo.disponible = false;
           //ELIMINAR VIAJE
-          this.service.eliminar(i.id);
+          this.service.eliminar(i.ide);
+          this.fs.updateDoc('viajes/', i.ide, i);
           const toast = await this.toastCtrl.create({
             message: 'Viaje iniciado',
             duration: 2000
           });
           toast.present();
+          setTimeout(() => {
+            this.cargarDatos();
+          }, 1300);
         }
       }
     }
   }
   async finalizarViaje() {
-    const ses = await this.service.gett();
     for await (const i of this.viajes) {
       if (i.idConductor !== undefined) {
-        if (ses.sesion === i.idConductor) {
+        if (this.ses === i.idConductor) {
           const vLimbo = i;
           vLimbo.visible = false;
+          this.fs.updateDoc('viajes/', i.ide, i);
           const toast = await this.toastCtrl.create({
             message: 'Viaje finalizado',
             duration: 2000
           });
           toast.present();
+          setTimeout(() => {
+            this.cargarDatos();
+          }, 1300);
         }
       }
     }
