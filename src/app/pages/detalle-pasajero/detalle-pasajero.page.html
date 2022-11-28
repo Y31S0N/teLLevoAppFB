@@ -1,0 +1,25 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/tab1"></ion-back-button>
+    </ion-buttons>
+
+    <ion-title>Viaje</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ng-container *ngIf="rol === 'conductor'">
+
+  <ion-content class="ion-padding">
+    <ion-grid fixed>
+      Esta será la vista del conductor para el detalle pasajero
+    </ion-grid>
+  </ion-content>
+</ng-container>
+
+<ng-container *ngIf="rol === 'pasajero'">
+  <ion-content class="ion-padding">
+    <ion-card class="ion-padding">
+      <p>{{comentario}}</p>
+    </ion-card>
+  </ion-content>
+</ng-container>

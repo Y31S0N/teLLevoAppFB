@@ -1,0 +1,44 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Iniciar sesión</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-card class="ion-margin ion-padding">
+    <ion-card-content>
+
+      <form #miform="ngForm" (ngSubmit)="onSubmit()">
+        <ion-text>
+          <h1>Inicio de Sesión</h1>
+        </ion-text>
+        <ion-item>
+          <ion-label position="floating">Usuario</ion-label>
+          <ion-input required="" clearInput [(ngModel)]="usuario.username" name="username"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="floating">Password</ion-label>
+          <ion-input required="" type="password" clearInput [(ngModel)]="usuario.password" name="password"></ion-input>
+        </ion-item>
+        <ion-button class="ion-padding" expand="block" fill="solid" shape="round" type="submit"
+          [disabled]="miform.invalid">
+          Ingresar
+        </ion-button>
+        <div class="forgot">
+          <a (click)="alerta()">Reestablecer contraseña</a>
+        </div>
+      </form>
+    </ion-card-content>
+  </ion-card>
+</ion-content>
+
+<ion-footer>
+  <ion-toolbar>
+    <p class="ion-text-center">¿No tienes una cuenta? ➡</p>
+    <ion-buttons slot="end">
+      <ion-button (click)="goToRegistrar()">
+        Registrarse
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-footer>

@@ -1,0 +1,69 @@
+ion-toolbar {
+    --background: #065893;
+    --color: #e6e6e6;
+}
+ion-content {
+    --background: #f2f2f2;
+    // --color: black;
+}
+.centrado{
+    position: fixed;
+    width: 100%;
+    text-align: center;
+    bottom: 3%;
+}
+
+//de acá para abajo es el color
+ion-toolbar{
+    --background: #153863;
+}
+ion-item{
+    --background: #D4E0EC;
+}
+ion-list{
+    padding: 0; //esto saca las líneas blancas innecesarias alrededor del ion-list
+}
+ion-content {
+    --background: #eeeeee;
+}
+ion-button{
+    --background: #FFB800;
+    --color: #151515;
+}
+
+ion-card {
+    --background: #8BB8E8;
+}
+ion-img{
+    padding-left: 15%;
+    padding-right: 15%;
+}
+ion-grid{
+    background-color: #8BB8E8;
+}
+ion-col{
+    --background: #8BB8E8;
+}
+ion-card{
+    --background: #8BB8E8;;
+}
+h5{
+    color: #153863;
+}
+ion-item{
+    color: brown;
+}
+p{
+    color: brown;
+}
+ion-button{
+    --background: #FFB800;
+}h2{
+    color: black;
+}
+p{
+    color:black;
+}h6{
+    color: black;
+    margin-left: 23px;
+}

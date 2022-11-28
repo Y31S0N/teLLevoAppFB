@@ -1,0 +1,38 @@
+h6{
+    float: left;
+}
+.center{
+    position: fixed;
+    width: 100%;
+    text-align: center;
+    bottom: 10%;
+}
+//de acá para abajo es el color
+ion-toolbar{
+    --background: #153863;
+}
+ion-item{
+    --background: #eeeeee;
+}
+ion-list{
+    padding: 0; //esto saca las líneas blancas innecesarias alrededor del ion-list
+}
+ion-content {
+    --background: #eeeeee;
+}
+ion-button{
+    --background: #FFB800;
+}
+
+ion-card {
+    --background: #8BB8E8;
+}
+ion-text{
+    color: black;
+}
+h6{
+    color:black
+}
+ion-card{
+    --background: ;
+}

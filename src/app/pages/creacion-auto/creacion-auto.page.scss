@@ -1,0 +1,30 @@
+//de acá para abajo es el color
+ion-toolbar{
+    --background: #153863;
+}
+ion-item{
+    --background: #eeeeee;
+    --color: #151515;
+}
+ion-list{
+    padding: 0; //esto saca las líneas blancas innecesarias alrededor del ion-list
+}
+ion-content {
+    --background: #eeeeee;
+}
+ion-button{
+    --background: #FFB800;
+}
+
+ion-card {
+    --background: #8BB8E8;
+}
+h5{
+    color:#153863;
+}
+ion-title {
+    --color: #eeeeee;
+}
+ion-back-button{
+    color: #eeeeee;
+}

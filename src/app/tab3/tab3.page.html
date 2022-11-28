@@ -1,0 +1,91 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>
+      Perfil de {{usuario.username}}
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+<ng-container *ngIf="usuario.rol === 'pasajero'">
+  <ion-content [fullscreen]="true">
+    <ion-card class="ion-margin">
+      <h5 class="ion-margin">Información del usuario</h5>
+      <ion-item>
+        <p>Nombre de usuario: {{usuario.username}}</p>
+      </ion-item>
+      <ion-item>
+        <p>Nombre: {{usuario.nombre | titlecase}} {{usuario.apaterno | titlecase }} {{usuario.amaterno |titlecase }}</p>
+      </ion-item>
+      <ion-item>
+        <p>Correo: {{usuario.correo}}</p>
+      </ion-item>
+      <ion-item>
+        <p>Rol: {{usuario.rol | titlecase}}</p>
+      </ion-item>
+      <div class="centrado">
+        <ion-button (click)="cambiarRol()" fill="clear" shape="round">
+          Cambiar rol
+        </ion-button>
+      </div>
+
+    </ion-card>
+    <div class="centrado">
+      <ion-button (click)="cerrarSesion()" shape="round">
+        Cerrar Sesión
+      </ion-button>
+    </div>
+  </ion-content>
+</ng-container>
+
+
+<ng-container *ngIf="usuario.rol === 'conductor'">
+  <ion-content>
+    <ion-card>
+      <h5 class="ion-margin">Información del usuario actual</h5>
+      <ion-item>
+        <p>Username: {{usuario.username}}</p>
+      </ion-item>
+      <ion-item>
+        <p>Nombre: {{usuario.nombre}} {{usuario.apaterno}} {{usuario.amaterno}}</p>
+      </ion-item>
+      <ion-item>
+        <p>Correo: {{usuario.correo}}</p>
+      </ion-item>
+      <ion-item>
+        <p>Rol: {{usuario.rol | titlecase}}</p>
+      </ion-item>
+    </ion-card>
+
+    <div class="centrado">
+      <ion-button (click)="cambiarRol()" fill="clear" shape="round">
+        Cambiar rol
+      </ion-button>
+    </div>
+
+    <ion-card>
+      <h5 class="ion-margin">Auto del propietario</h5>
+      <ion-item>
+        <p>Patente: {{usuario.auto.patente}}</p>
+      </ion-item>
+      <ion-item>
+        <p>Marca: {{usuario.auto.marca}}</p>
+      </ion-item>
+      <ion-item>
+        <p>Modelo: {{usuario.auto.modelo}}</p>
+      </ion-item>
+      <ion-item>
+        <p>Color: {{usuario.auto.color}}</p>
+      </ion-item>
+      <ion-item>
+        <p>N° de asientos: {{usuario.auto.numAsientos}}</p>
+      </ion-item>
+
+    </ion-card>
+    <div class="centrado">
+      <ion-button (click)="cerrarSesion()" fill="clear" shape="round">
+        Cerrar Sesión
+      </ion-button>
+    </div>
+  </ion-content>
+</ng-container>

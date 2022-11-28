@@ -1,0 +1,43 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/tab1"></ion-back-button>
+    </ion-buttons>
+
+    <ion-title>Viaje</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <h4 class="ion-margin">Información del viaje</h4>
+  <ion-card class="ion-margin">
+    <ion-item *ngIf="rol === 'pasajero'">
+      <h6>Username: {{username}}</h6>
+    </ion-item>
+    <ion-item>
+      <h6>Conductor: {{nombre |titlecase}} {{apaterno|titlecase}} {{amaterno|titlecase}}</h6>
+    </ion-item>
+    <ion-item>
+      <h6>Destino: {{destino}}</h6>
+    </ion-item>
+    <ion-item>
+      <h6>Costo: ${{costo}}</h6>
+    </ion-item>
+    <ion-item>
+      <h6>Método de pago preferente: {{pago | titlecase }}</h6>
+    </ion-item>
+    <ion-item>
+      <h6>Fecha salida: {{fecha}}</h6>
+    </ion-item>
+    <ion-item>
+      <h6>Hora salida: {{hora}}</h6>
+    </ion-item>
+    <ion-item>
+      <h6>Comentario del conductor: {{comentario}}</h6>
+    </ion-item>
+  </ion-card>
+  
+  <ion-button class="ion-margin" *ngIf="rol === 'pasajero'" (click)="intentartomarViaje()" expand="block" fill="clear" shape="round">
+    Tomar Viaje
+  </ion-button>
+</ion-content>

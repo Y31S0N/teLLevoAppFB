@@ -1,0 +1,115 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Viaje actual</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ng-container *ngIf="rol === 'conductor'">
+  <ion-content *ngIf="viaje2 !== undefined && viaje2.attributes.visible === true">
+    <ion-card>
+      <h5 class="ion-margin">Información del viaje</h5>
+      <ion-item>
+        <p>Destino: {{destino}}</p>
+      </ion-item>
+      <ion-item>
+        <p>Costo: ${{costo}}</p>
+      </ion-item>
+      <ion-item>
+        <p>Método de pago preferente: {{pago | titlecase}}</p>
+      </ion-item>
+      <ion-item>
+        <p>Fecha salida: {{fecha}}</p>
+      </ion-item>
+      <ion-item>
+        <p>Hora salida: {{hora}}</p>
+      </ion-item>
+      <ion-item>
+        <p>Comentario: {{comentario}}</p>
+      </ion-item>
+    </ion-card>
+
+
+  
+    <ion-card *ngIf="pasajeros">
+      <h5 class="ion-margin">Pasajeros</h5>
+      <ion-list *ngFor="let i of pasajeros">
+        <ion-item>
+          <ion-label>
+            <h2>Username: {{i.username}}</h2>
+            <h2>Nombre: {{i.nombre}} {{i.apaterno}} {{i.amaterno}}</h2>
+            <h2>Correo: {{i.correo}}</h2>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-card>
+
+      <h6 *ngIf="pasajeros.length === 0" class="ion-margin">
+        Por ahora, no hay nadie aún...
+      </h6>
+
+    
+    <div class="ion-text-center" *ngIf="disponible">
+      <ion-button id="iniciar" class="ion-margin" (click)="iniciarViaje()" fill="clear" shape="round">
+        Iniciar viaje
+      </ion-button>
+    </div>
+    <div class="ion-text-center" *ngIf="!disponible">
+      <ion-button id="finalizar" class="ion-margin" (click)="finalizarViaje()" fill="clear" shape="round">
+        Finalizar viaje
+      </ion-button>
+    </div>
+  </ion-content>
+
+  <ion-content *ngIf="viaje2 === undefined">
+    <ion-card>
+      <h5 class="ion-margin">
+        No has programado ningún viaje...
+      </h5>
+    </ion-card>
+    <ion-card>
+      <div class="centrado">
+        <ion-button (click)="progViaje()">
+          Programar viaje
+        </ion-button>
+      </div>
+    </ion-card>
+  </ion-content>
+</ng-container>
+
+
+
+<ng-container *ngIf="rol === 'pasajero'">
+  <ion-content>
+    <ion-card *ngIf="viaje2 !== undefined">
+      <h5 class="ion-margin">Información del viaje</h5>
+      <ion-item>
+        <p>Destino: {{destino}}</p>
+      </ion-item>
+      <ion-item>
+        <p>Nombre conductor: {{nom | titlecase}} {{apat | titlecase}} {{amat | titlecase}}</p>
+      </ion-item>
+      <ion-item>
+        <p>Usuario conductor: {{username}}</p>
+      </ion-item>
+      <ion-item>
+        <p>Costo: ${{costo}}</p>
+      </ion-item>
+      <ion-item>
+        <p>Método de pago preferente: {{pago | titlecase}}</p>
+      </ion-item>
+      <ion-item>
+        <p>Fecha salida: {{fecha}}</p>
+      </ion-item>
+      <ion-item>
+        <p>Hora salida: {{hora}}</p>
+      </ion-item>
+      <ion-item>
+        <p>Comentario: {{comentario}}</p>
+      </ion-item>
+    </ion-card>
+    
+    <ion-card *ngIf="viaje2 === undefined">
+      <h5 class="ion-margin">{{msg}}...</h5>
+    </ion-card>
+  </ion-content>
+</ng-container>

@@ -1,0 +1,90 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title style="color: white;">Registrarse</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <ion-card>
+    <ion-card-content>
+      <form #miForm="ngForm" (ngSubmit)="onSubmit()">
+        <ion-text>
+          <h1 class="ion-margin">Registro</h1>
+        </ion-text>
+        
+        <ion-item>
+          <ion-label position="floating">Nombre: </ion-label>
+          <ion-input type="text" placeholder="Ej: Juan" clearInput [(ngModel)]="usuario.nombre" name="nombre"></ion-input>
+        </ion-item>
+        
+        <ion-item>
+          <ion-label position="floating">Apellido Paterno</ion-label>
+          <ion-input type="text" placeholder="Ej: Martínez" clearInput [(ngModel)]="usuario.apaterno" name="apaterno"></ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="floating">Apellido Materno</ion-label>
+          <ion-input type="text" placeholder="Ej: Sepúlveda" clearInput [(ngModel)]="usuario.amaterno" name="amaterno"></ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="floating">Nombre de usuario</ion-label>
+          <ion-input type="text" clearInput [(ngModel)]="usuario.username" name="username"></ion-input>
+        </ion-item>
+
+
+        <ion-item>
+          <ion-label position="floating">Correo institucional (duoc)</ion-label>
+          <ion-input type="email" placeholder="correo institucional" clearInput [(ngModel)]="usuario.correo" name="correo"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="floating">Contraseña</ion-label>
+          <ion-input type="password" clearInput [(ngModel)]="usuario.password" name="password"></ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="floating">Confirmar contraseña</ion-label>
+          <ion-input required type="password" clearInput [(ngModel)]="usuario.pass" name="password"></ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-select name="rol" [(ngModel)]="usuario.rol" placeholder="Selecciona un rol">
+            <ion-select-option value="conductor">Conductor</ion-select-option>
+            <ion-select-option value="pasajero">Pasajero</ion-select-option>
+          </ion-select>
+        </ion-item>
+
+        <ng-container *ngIf="usuario.rol === 'conductor'">
+          <h2 class="ion-text-center ion-padding">Introduce la información de tu auto</h2>
+          <ion-item>
+            <ion-label position="floating">Marca</ion-label>
+            <ion-input clearInput [(ngModel)]="auto.marca" name="marca" type="text" placeholder="Ej: Toyota" required></ion-input>
+          </ion-item>
+
+          <ion-item>
+            <ion-label position="floating">Modelo</ion-label>
+            <ion-input  [(ngModel)]="auto.modelo" name="modelo" type="text" placeholder="Ej: Yaris" required clearInput></ion-input>
+          </ion-item>
+
+          <ion-item>
+            <ion-label position="floating">Patente</ion-label>
+            <ion-input clearInput [(ngModel)]="auto.patente" name="patente" type="text" placeholder="Ej: TH2365" required></ion-input>
+          </ion-item>
+
+          <ion-item>
+            <ion-label position="floating">Color</ion-label>
+            <ion-input [(ngModel)]="auto.color" clearInput name="color" type="text" placeholder="Ej: Gris" required></ion-input>
+          </ion-item>
+
+          <ion-item>
+            <ion-label position="floating">N° de asientos disponibles</ion-label>
+            <ion-input [(ngModel)]="auto.numAsientos" clearInput name="numAsientos" type="number" placeholder="Ej: 4" required></ion-input>
+          </ion-item>
+        </ng-container>
+
+        <ion-button expand="block" fill="solid" shape="round" type="submit" [disabled]="miForm.invalid">
+          Registrarse
+        </ion-button>
+      </form>
+    </ion-card-content>
+  </ion-card>
+</ion-content>
