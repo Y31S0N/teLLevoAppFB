@@ -16,11 +16,7 @@ export class StorageService {
   async guardar(id: string, value){
     await this.storage.set(id, value);
   }
-  async gett(){
-    const ses = await this.storage.get('usuario');
-    return await this.storage.get(ses);
-  }
-  async getSinSes(id){
+  async gett(id){
     return await this.storage.get(id);
   }
   async listar(){

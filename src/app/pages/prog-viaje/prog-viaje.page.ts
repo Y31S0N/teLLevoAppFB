@@ -94,7 +94,7 @@ export class ProgViajePage implements AfterViewInit {
         });
         await alert.present();
       }else{
-        this.user = await this.service.gett();
+        this.user = await this.service.gett('usuario');
         this.viaje.idConductor = this.user.sesion;
         //ACÁ LA IDEA ES ALMACENAR LA CANTIDAD DE ASIENTOS QUE TIENE EL AUTO DEL CONDUCTOR ACTUAL
         this.viaje.nAsientos = this.user.auto.numAsientos;
