@@ -44,7 +44,6 @@ export class Tab3Page implements ViewWillEnter {
   }
   async cargarDatos() {
     this.user = await this.service.gett('usuario');
-    console.log(this.user);
     this.rol = this.user.rol;
     this.usuario.username = this.user.username;
     this.usuario.nombre = this.user.nombre;
@@ -63,15 +62,30 @@ export class Tab3Page implements ViewWillEnter {
     this.router.navigate(['/historial']);
   }
   async cerrarSesion() {
-    const toast = await this.toastCtrl.create({
-      message: 'Sesión cerrarda con éxito.',
-      duration: 2000
+    const alert = await this.alertCtrl.create({
+      header: 'Precacuión',
+      subHeader: 'Está seguro que desea cerrar sesión?',
+      message: 'Si tiene un viaje, y vuelve a ingresar, no podrá ver la información del viaje',
+      mode: 'ios',
+      buttons: [{
+        text: 'Si',
+        handler: async () =>{
+          const toast = await this.toastCtrl.create({
+            message: 'Sesión cerrarda con éxito.',
+            duration: 2000
+          });
+          toast.present();
+          this.service.eliminar('sesion');
+          this.service.eliminar('usuario');
+          this.service.eliminar('viaje');
+          this.router.navigate(['/login']);
+        }
+      },{
+        text: 'No',
+        role: 'cancel'
+      }]
     });
-    toast.present();
-    this.service.eliminar('sesion');
-    this.service.eliminar('usuario');
-    this.service.eliminar('viaje');
-    this.router.navigate(['/login']);
+    await alert.present();
   }
   async cambiarRol() {
     const toast1 = await this.toastCtrl.create({
@@ -137,7 +151,6 @@ export class Tab3Page implements ViewWillEnter {
         }
         for (const j of i.pasajeros) {
           if (j === this.user.sesion && i.disponible) {
-            console.log('Pasajero, no puede irse');
             doTrip = false;
           }
         }
@@ -146,7 +159,6 @@ export class Tab3Page implements ViewWillEnter {
       for await (const i of this.viajes) {
         if (this.user.sesion === i.idConductor) {//el usuario ha hecho viajes
           if (i.disponible) {//el usuario tiene un viaje en curso
-            console.log('Conductor, no puede irse');
             doTrip = false;
 
           }

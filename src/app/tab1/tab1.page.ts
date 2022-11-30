@@ -32,7 +32,6 @@ export class Tab1Page implements ViewWillEnter {
   }
   async cargarDatos(){
     this.user = await this.service.gett('usuario');
-    console.log(this.user);
     this.username = this.user.username;
     this.rol = this.user.rol;
     this.listarViajes();

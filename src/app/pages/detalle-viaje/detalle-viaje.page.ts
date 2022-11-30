@@ -10,16 +10,10 @@ import { FirestoreService } from '../../services/firestore.service';
   styleUrls: ['./detalle-viaje.page.scss'],
 })
 export class DetalleViajePage implements ViewWillEnter {
-  viajeId; usuario; rol;
+  viajeId: string; rol: string; comentario: string; costo: number; destino: string; pago: string;
+  nombre: string; apaterno: string; amaterno: string; username: string; fecha: string; hora: string;
+  pasajero: any; viajes: any; usuarios: any; idCond: string; pasajeros = [];
 
-  comentario: string; costo: number; destino: string; pago: string;
-  nombre: string; apaterno: string; amaterno: string; username: string;
-
-  auto; color; viajeActual;
-  fecha: string; hora: string;
-  pasajero; viajes; usuarios; idCond;
-  count = 0;
-  pasajeros = [];
   constructor(private actRoute: ActivatedRoute, private service: StorageService,
     private alertCtrl: AlertController, private toastCtrl: ToastController,
     private fs: FirestoreService, private router: Router) {
@@ -103,8 +97,7 @@ export class DetalleViajePage implements ViewWillEnter {
       //si tiene pasajeros, osea, es un viaje
       if (i.pasajeros === null) {
         continue;
-      }
-      //si el usuario actual está dentro de alguno de los viajes Y ...
+      }//si el usuario actual está dentro de alguno de los viajes Y ...
       for await (const j of i.pasajeros) {
         if (usr.sesion === j && i.disponible === true) {
           doTrip = false;

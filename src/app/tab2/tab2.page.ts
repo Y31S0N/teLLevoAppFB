@@ -43,19 +43,20 @@ export class Tab2Page implements ViewWillEnter {
   ionViewWillEnter() {
     setTimeout(() => {
       this.cargarDatos();
-    }, 1300);
+    }, 1500);
   }
   async cargarDatos(){
     this.user = await this.service.gett('usuario');
-    this.viaje=this.getViajeConductor();
+    this.getViajeConductor();
+    this.viaje = await this.service.gett('viaje');
     this.rol = this.user.rol;
     if (this.rol === 'conductor'){
       const viaje = this.viaje;
       if (viaje !== undefined && viaje !== null) {
         this.viaje=viaje;
         this.pasajeros = [];
-        for await (const i of this.usuarios) {
-          for await (const j of this.viaje.pasajeros) {
+        for (const i of this.usuarios) {
+          for (const j of this.viaje.pasajeros) {
             if(j === i.sesion){
               this.pasajeros.push(i);
             }
@@ -80,7 +81,6 @@ export class Tab2Page implements ViewWillEnter {
       if (this.viaje === undefined) {
         this.msg = 'No estás en ningún viaje actualmente';
       } else {
-        console.log('Acá va el viaje para el pasajero');
         this.destino = viaje.destino;
         this.costo = viaje.costo;
         this.comentario = viaje.comentario;
@@ -101,7 +101,6 @@ export class Tab2Page implements ViewWillEnter {
       if (i.idConductor !== undefined && i.visible === true) {
         if(i.idConductor === this.user.sesion){
           this.service.guardar('viaje',i);
-          return i;
         }
       }
     }

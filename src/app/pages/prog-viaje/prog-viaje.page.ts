@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, AfterViewInit, ViewChild, ElementRef, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
 import * as mapboxgl from 'mapbox-gl';
@@ -16,7 +16,7 @@ import { FirestoreService } from '../../services/firestore.service';
   templateUrl: './prog-viaje.page.html',
   styleUrls: ['./prog-viaje.page.scss'],
 })
-export class ProgViajePage implements AfterViewInit {
+export class ProgViajePage implements OnInit {
   @ViewChild('mapa') mapaGG!: ElementRef;
   start = [-73.064083, -36.794719];
 
@@ -41,7 +41,7 @@ export class ProgViajePage implements AfterViewInit {
   constructor(private alertCtrl: AlertController, private router: Router,
     private service: StorageService, private fs: FirestoreService){}
 
-  async ngAfterViewInit() {
+  async ngOnInit() {
     this.viaje.comentario = '';
     this.viaje.pago = null;
     this.viaje.costo = 500;
