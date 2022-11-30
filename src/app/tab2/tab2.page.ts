@@ -46,11 +46,11 @@ export class Tab2Page implements ViewWillEnter {
     }, 1300);
   }
   async cargarDatos(){
-    this.user = await this.service.gett();
-    this.ses = await this.service.getSinSes('sesion');
+    this.user = await this.service.gett('usuario');
+    // this.ses = await this.service.getSinSes('sesion');
     this.rol = this.user.rol;
     if (this.rol === 'conductor') {
-      const viaje = await this.service.getSinSes('viaje');
+      const viaje = await this.service.gett('viaje');
       console.log(viaje);
       if (viaje !== undefined && viaje !== null) {
         this.viaje=viaje;
@@ -73,9 +73,6 @@ export class Tab2Page implements ViewWillEnter {
         this.hora = viaje.hora;
         this.fecha = viaje.fecha;
       }else{
-        console.log(this.user);
-        console.log(this.ses);
-        console.log(this.rol);
       }
     } else if (this.rol === 'pasajero') {
       const viaje = await this.getViajePasajero();
@@ -150,7 +147,7 @@ export class Tab2Page implements ViewWillEnter {
   }
   async verifRealizar() {
     for await (const i of this.viajes) {
-      if (i.idConductor !== undefined && i.idConductor === this.ses.sesion) {
+      if (i.idConductor !== undefined && i.idConductor === this.user.sesion) {
         if (i.disponible === true) {
           return false;
         }
@@ -160,7 +157,7 @@ export class Tab2Page implements ViewWillEnter {
   async iniciarViaje() {
     for await (const i of this.viajes) {
       if (i.idConductor !== undefined) {
-        if (this.ses === i.idConductor) {
+        if (this.user.sesion === i.idConductor) {
           const vLimbo = i;
           vLimbo.disponible = false;
           //ELIMINAR VIAJE
@@ -181,7 +178,7 @@ export class Tab2Page implements ViewWillEnter {
   async finalizarViaje() {
     for await (const i of this.viajes) {
       if (i.idConductor !== undefined) {
-        if (this.ses === i.idConductor) {
+        if (this.user.sesion === i.idConductor) {
           const vLimbo = i;
           vLimbo.visible = false;
           this.fs.updateDoc('viajes/', i.ide, i);

@@ -34,7 +34,7 @@ export class DetalleViajePage implements ViewWillEnter {
   }
   async cargarDatos() {
     this.viajeId = this.actRoute.snapshot.paramMap.get('id');
-    this.pasajero = await this.service.gett();
+    this.pasajero = await this.service.gett('usuario');
     this.rol = this.pasajero.rol;
 
     console.log(this.viajeId);
@@ -97,7 +97,7 @@ export class DetalleViajePage implements ViewWillEnter {
   }
   async verifViaje() {
     //toma el usuario de la sesión actual, en este caso pasajero
-    const usr = await this.service.gett();
+    const usr = await this.service.gett('usuario');
     let doTrip = true;
     for await (const i of this.viajes) {
       //si tiene pasajeros, osea, es un viaje
