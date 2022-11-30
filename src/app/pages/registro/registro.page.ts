@@ -21,16 +21,11 @@ export class RegistroPage implements OnInit {
   };
 
   usuario = {
-    ide: '',
-    nombre: '',
-    apaterno: '',
-    amaterno: '',
-    username: '',
-    password: '',
-    pass: '',
-    correo: '',
-    rol: '',
-    auto: this.auto,
+    ide: '', nombre: '',
+    apaterno: '', amaterno: '',
+    username: '', password: '',
+    pass: '', correo: '',
+    rol: '', auto: this.auto,
   };
   constructor(private router: Router, private toastCtrl: ToastController,
     private alertCtrl: AlertController, private service: StorageService,

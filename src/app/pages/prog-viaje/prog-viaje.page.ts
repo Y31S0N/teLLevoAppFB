@@ -42,11 +42,9 @@ export class ProgViajePage implements AfterViewInit {
     private service: StorageService, private fs: FirestoreService){}
 
   async ngAfterViewInit() {
-    //LIMPIAR CAMPOS
     this.viaje.comentario = '';
     this.viaje.pago = null;
     this.viaje.costo = 500;
-
     //CREO EL MAPA
     const limites=[
       [-73.244978, -37.148823],[-72.251465, -36.523733]
@@ -58,6 +56,7 @@ export class ProgViajePage implements AfterViewInit {
       zoom: 15,
       maxBounds: limites
     });
+    //GEOCO ES LA BARRA DE BÚSQUEDA
     const geoco = new MapboxGeocoder({
       accessToken: mapboxgl.accessToken,
       mapboxgl,
@@ -68,7 +67,6 @@ export class ProgViajePage implements AfterViewInit {
     });
     // LE AÑADO EL GEOCODER AL MAPA
     mapa.addControl(geoco);
-    //GEOCO ES LA BARRA DE BÚSQUEDA
 
     geoco.on('result', ($event) => {
       this.viaje.destino = $event.result.place_name;
@@ -76,7 +74,7 @@ export class ProgViajePage implements AfterViewInit {
     const pop = new mapboxgl.Popup().setHTML('<p style="color: black;">Inicio de viaje predeterminado</p>');
     this.crearMarcador(this.start[0], this.start[1], mapa, pop);
 
-    // geoco.clear();
+    geoco.clear();
   }
   async submit() {
     if(this.viaje.destino === '' || this.viaje.destino === ' '){
@@ -103,8 +101,8 @@ export class ProgViajePage implements AfterViewInit {
         this.idViaje = nanoid(20);
         this.viaje.ide = this.idViaje;
         //guardar viaje
-        this.fs.createDoc('viajes/', this.idViaje, this.viaje);
-        // this.ps.createPost({data: this.viaje}, 'viajes').subscribe();
+        await this.fs.createDoc('viajes/', this.idViaje, this.viaje);
+        await this.service.guardar('viaje', this.viaje);
         const alert = await this.alertCtrl.create({
           header: 'Viaje programado!',
           message: 'Ahora... a esperar',

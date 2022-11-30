@@ -24,19 +24,18 @@ export class Tab1Page implements ViewWillEnter {
   ionViewWillEnter() {
     setTimeout(() => {
       this.cargarDatos();
-    }, 1000);
+    }, 1200);
   }
   async cargarDatos(){
     this.user = await this.service.gett();
+    console.log(this.user);
     this.username = this.user.username;
     this.rol = this.user.rol;
     this.listarViajes();
   }
-  async ionViewDidLeave(){
-   this.listaViajes = [];
-   this.historialCon = [];
-  }
   listarViajes() {
+    this.listaViajes = [];
+    this.historialCon = [];
     for (const i of this.viajes) {
       if (i.ide === undefined) {
         continue;

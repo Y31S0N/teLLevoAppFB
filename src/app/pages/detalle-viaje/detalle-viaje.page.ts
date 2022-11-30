@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { StorageService } from '../../services/storage.service';
 import { AlertController, ToastController, ViewWillEnter } from '@ionic/angular';
-import { PostService } from '../../services/post.service';
+import { FirestoreService } from '../../services/firestore.service';
 
 @Component({
   selector: 'app-detalle-viaje',
@@ -12,64 +12,50 @@ import { PostService } from '../../services/post.service';
 export class DetalleViajePage implements ViewWillEnter {
   viajeId; usuario; rol;
 
-  comentario: string;
-  costo: number;
-  destino: string;
-  pago: string;
-  nombre: string;
-  apaterno: string;
-  amaterno: string;
-  username: string;
+  comentario: string; costo: number; destino: string; pago: string;
+  nombre: string; apaterno: string; amaterno: string; username: string;
 
-  auto; color;
-  viajeActual;
-  fecha: string;
-  hora: string;
-  pasajero;
-  viajes;
-  usuarios;
-  idCond;
-  pasaj;
-  constructor(private actRoute: ActivatedRoute,
-    private service: StorageService,
-    private alertCtrl: AlertController,
-    private toastCtrl: ToastController,
-    private ps: PostService,
-    private router: Router) {
-      this.viajes = this.ps.getPosts('viajes').subscribe(res=>this.viajes=res);
-      this.usuarios=this.ps.getPosts('usuarios').subscribe(res=>this.usuarios=res);
+  auto; color; viajeActual;
+  fecha: string; hora: string;
+  pasajero; viajes; usuarios; idCond;
+  count = 0;
+  pasajeros = [];
+  constructor(private actRoute: ActivatedRoute, private service: StorageService,
+    private alertCtrl: AlertController, private toastCtrl: ToastController,
+    private fs: FirestoreService, private router: Router) {
+    this.viajes = this.fs.readCollection('viajes/').subscribe(res => this.viajes = res);
+    this.usuarios = this.fs.readCollection('usuarios/').subscribe(res => this.usuarios = res);
   }
 
   async ionViewWillEnter() {
-    setTimeout(()=>{
+    setTimeout(() => {
       this.cargarDatos();
-    }, 800);
+    }, 1300);
   }
-  async cargarDatos(){
-    //ID DEL VIAJE ACTUAL
+  async cargarDatos() {
     this.viajeId = this.actRoute.snapshot.paramMap.get('id');
-    //PASAJERO DE LA SESIÓN ACTUAL
     this.pasajero = await this.service.gett();
-    //guarda el pasajero en la lista
     this.rol = this.pasajero.rol;
-    //ESTA LÍNEA ES UN ERROR, los viajes ahora los tengo en la API, NECESITO UN MÉTODO
+
+    console.log(this.viajeId);
+    console.log(this.pasajero);
+    console.log(this.rol);
     const viaje = this.getViaje();
+    this.comentario = viaje.comentario;
+    this.costo = viaje.costo;
+    this.destino = viaje.destino;
+    this.pago = viaje.pago;
+    this.fecha = viaje.fecha;
+    this.hora = viaje.hora;
 
-    this.comentario = viaje.attributes.comentario;
-    this.costo = viaje.attributes.costo;
-    this.destino = viaje.attributes.destino;
-    this.pago = viaje.attributes.pago;
-    this.fecha = viaje.attributes.fecha;
-    this.hora = viaje.attributes.hora;
-
-    this.idCond = viaje.attributes.idConductor;
+    this.idCond = viaje.idConductor;
     const cond = this.getConductor();
 
     this.nombre = cond.nombre;
     this.apaterno = cond.apaterno;
     this.amaterno = cond.amaterno;
     this.username = cond.username;
-
+    this.getPasajeros();
   }
   async intentartomarViaje() {
     const alert = await this.alertCtrl.create({
@@ -104,15 +90,10 @@ export class DetalleViajePage implements ViewWillEnter {
     await alert.present();
   };
   async tomarViaje() {
-    //VIAJE EN CUESTIÓN
     const viaje = this.getViaje();
-    console.log(viaje);
-    //LO PASO AL ARRAY LOCAL
-    this.viajeActual = await viaje;
-    //AGREGO EL PASAJERO ACTUAL AL VIAJE ACTUAL
-    this.pasaj = this.viajeActual.attributes.pasajeros += this.pasajero.sesion + ' ';
-
-    this.ps.updatePost('viajes', this.viajeActual.id, {data: this.viajeActual.attributes}).subscribe();
+    viaje.pasajeros.push(this.pasajero.sesion);
+    this.fs.updateDoc('viajes/', viaje.ide, viaje);
+    this.service.guardar('viaje', viaje);
   }
   async verifViaje() {
     //toma el usuario de la sesión actual, en este caso pasajero
@@ -120,13 +101,12 @@ export class DetalleViajePage implements ViewWillEnter {
     let doTrip = true;
     for await (const i of this.viajes) {
       //si tiene pasajeros, osea, es un viaje
-      if(i.attributes.pasajeros === null){
+      if (i.pasajeros === null) {
         continue;
       }
-      const pas = i.attributes.pasajeros.split(' ');
       //si el usuario actual está dentro de alguno de los viajes Y ...
-      for await (const j of pas) {
-        if (usr.sesion === j && i.attributes.disponible === true) {
+      for await (const j of i.pasajeros) {
+        if (usr.sesion === j && i.disponible === true) {
           doTrip = false;
         }
       }
@@ -134,16 +114,27 @@ export class DetalleViajePage implements ViewWillEnter {
   }
   getViaje() {
     for (const i of this.viajes) {
-      console.log(i.attributes.pasajeros);
-      if (i.id.toString() === this.viajeId.toString()) {
+      if (i.ide === this.viajeId) {
         return i;
       }
     }
   }
   getConductor() {
     for (const i of this.usuarios) {
-      if (i.attributes.sesion === this.idCond) {
-        return i.attributes;
+      if (i.sesion === this.idCond) {
+        return i;
+      }
+    }
+  }
+  getPasajeros() {
+    this.pasajeros=[];
+    const viaje = this.getViaje();
+    console.log(viaje.pasajeros);
+    for (const i of this.usuarios) {
+      for (const j of viaje.pasajeros) {
+        if(j === i.sesion){
+          this.pasajeros.push(i);
+        }
       }
     }
   }

@@ -27,9 +27,6 @@ ion-button{
     --background: #FFB800;
 }
 
-ion-card {
-    --background: #8BB8E8;
-}
 ion-text{
     color: black;
 }
@@ -47,4 +44,23 @@ ion-title {
 }
 ion-back-button {
     --color: #eeeeee;
+}
+h5{
+    color: #eeeeee;
+}
+ion-card {
+    --background: #153863;
+}ion-item{
+    --background: #D4E0EC;
+}h2{
+    color: black;
+}
+#claro{
+    --background: #D4E0EC;
+    padding-top: 0 !important;
+    margin-top: 0 !important;
+}
+#pasajeros{
+    padding-bottom: 0;
+    margin-bottom: 0;
 }

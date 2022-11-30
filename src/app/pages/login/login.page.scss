@@ -1,16 +1,6 @@
 ion-toolbar {
-    // --background: #065893;
-    // --border-color: #3880ff;
-    // --border-style: transparent;;
-    // --border-width: 8px;
     --color: #e6e6e6;
-    // --min-height: 56px;
     --opacity: 1;
-    // --padding-bottom: 4px;
-    // --padding-end: 4px;
-    // --padding-start: 4px;
-    // --padding-top: 4px;
-    // font-family: alice-regular;
 }
 ion-content {
     --background: #f2f2f2;
@@ -70,4 +60,11 @@ h1{
     color: #065893;
 }a{
     color: #065893;
+}
+#nuevo{
+    padding: 0;
+    margin-left: 20%;
+}
+#irRegistro{
+    margin-right: 12%;
 }

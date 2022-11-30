@@ -1,7 +1,7 @@
 <ng-container *ngIf="rol === 'conductor'">
   <ion-header>
     <ion-toolbar>
-      <ion-title>Viajes recientes</ion-title>
+      <ion-title>Tus viajes recientes</ion-title>
     </ion-toolbar>
   </ion-header>
 
@@ -9,7 +9,7 @@
 
     <ion-list *ngIf="historialCon.length > 0">
       <ion-item class="rotate-hor-center" *ngFor="let lis of historialCon"
-        [routerLink]="['../../detalle-viaje/', lis.id]">
+        [routerLink]="['../../detalle-viaje/', lis.ide]">
         <ion-label>
           <p id="hora">Hora salida: {{lis.hora}}</p>
           <p id="destino">Destino: {{lis.destino}}</p>
@@ -35,7 +35,7 @@
 
     <ion-list *ngIf="listaViajes.length > 0">
       <ion-item class="rotate-hor-center" *ngFor="let lis of listaViajes"
-        [routerLink]="['../../detalle-viaje/', lis.id]">
+        [routerLink]="['../../detalle-viaje/', lis.ide]">
         <ion-label *ngIf="lis.disponible">
           <ion-label>
             <p id="hora">Hora salida: {{lis.hora}}</p>

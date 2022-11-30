@@ -14,7 +14,7 @@ export class Tab2Page implements ViewWillEnter {
 
   rol: string; destino: string; costo: number; comentario: string;
   pago: string; hora: string; fecha: string; pasaj = [];
-  msg: string; viaje2;
+  msg: string; viaje;
 
   usrnm: string;
 
@@ -30,31 +30,33 @@ export class Tab2Page implements ViewWillEnter {
   idCond;
   pasajeros=[];
   username;
+  conDel=0;
   constructor(private service: StorageService,
     private router: Router,
     private alertCtrl: AlertController,
     private toastCtrl: ToastController,
     private fs: FirestoreService){
-      this.fs.readCollection('usuarios/').subscribe(res=>this.usuarios=res);
-      this.fs.readCollection('viajes/').subscribe(res=>this.viajes=res);
+      this.fs.readCollection('usuarios/').subscribe(res=>this.usuarios= res);
+      this.fs.readCollection('viajes/').subscribe(res=>this.viajes= res);
     }
 
   ionViewWillEnter() {
     setTimeout(() => {
       this.cargarDatos();
-    }, 1400);
+    }, 1300);
   }
   async cargarDatos(){
     this.user = await this.service.gett();
     this.ses = await this.service.getSinSes('sesion');
     this.rol = this.user.rol;
     if (this.rol === 'conductor') {
-      const viaje = await this.getViajeConductor();
-      if (viaje !== undefined) {
-        this.viaje2=viaje;
-        //necesito la info de estos pasajeros, podría dejarlos dentro de un nuevo array, que tenga a todos los datos de cada pasajero
+      const viaje = await this.service.getSinSes('viaje');
+      console.log(viaje);
+      if (viaje !== undefined && viaje !== null) {
+        this.viaje=viaje;
+        this.pasajeros = [];
         for await (const i of this.usuarios) {
-          for await (const j of this.viaje2.pasajeros) {
+          for await (const j of this.viaje.pasajeros) {
             if(j === i.sesion){
               this.pasajeros.push(i);
             }
@@ -70,12 +72,16 @@ export class Tab2Page implements ViewWillEnter {
         this.pago = viaje.pago;
         this.hora = viaje.hora;
         this.fecha = viaje.fecha;
+      }else{
+        console.log(this.user);
+        console.log(this.ses);
+        console.log(this.rol);
       }
     } else if (this.rol === 'pasajero') {
       const viaje = await this.getViajePasajero();
-      this.viaje2 = await viaje;
+      this.viaje = await viaje;
 
-      if (this.viaje2 === undefined) {
+      if (this.viaje === undefined) {
         this.msg = 'No estás en ningún viaje actualmente';
       } else {
         console.log('Acá va el viaje para el pasajero');
@@ -112,7 +118,7 @@ export class Tab2Page implements ViewWillEnter {
         if(i.pasajeros === null || i.pasajeros === undefined){
           continue;
         }
-        for (const j of i.pasajeros) {
+        for (const j of i.pasajeros){
           //SI EL SESION DEL PASAJERO, ES EL MISMO DEL USUARIO ACTUAL Y, EL VIAJE ESTÁ VISIBLE
           if (j === this.user.sesion && i.visible === true) {
             return i;
@@ -165,8 +171,8 @@ export class Tab2Page implements ViewWillEnter {
             duration: 2000
           });
           toast.present();
-          setTimeout(() => {
-            this.cargarDatos();
+          setTimeout(async () => {
+            await this.cargarDatos();
           }, 1300);
         }
       }
@@ -184,11 +190,42 @@ export class Tab2Page implements ViewWillEnter {
             duration: 2000
           });
           toast.present();
-          setTimeout(() => {
-            this.cargarDatos();
-          }, 1300);
         }
       }
-    }
+    }setTimeout(() => {
+      this.cargarDatos();
+    }, 1500);
+  }
+  async salirViaje(){
+    const alert = await this.alertCtrl.create({
+      header: 'Alerta',
+      message: 'Desea salir de este viaje?',
+      buttons: [{
+        text: 'Si',
+        handler: ()=>{
+          for (const i of this.viajes) {
+            for (const j of i.pasajeros) {
+              if(j === this.user.sesion){
+                delete this.viaje.pasajeros[i.pasajeros.indexOf(j)]; //este lo deja empty
+                this.viaje.pasajeros = this.viaje.pasajeros.filter(pas => pas !== null);
+                this.fs.updateDoc('viajes/', this.viaje.ide, this.viaje);
+                setTimeout(()=>{
+                  this.cargarDatos();
+                },1000);
+                setTimeout(async ()=> {
+                  const toast = await this.toastCtrl.create({
+                    message: 'Saliste del viaje con éxito!',
+                    duration: 2000
+                  });
+                  toast.present();
+                },1000);
+
+              }
+            }
+          }
+        },
+      }]
+    });
+    await alert.present();
   }
 }

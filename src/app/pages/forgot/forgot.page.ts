@@ -3,6 +3,7 @@ import { ToastController, ViewWillEnter } from '@ionic/angular';
 import { Router, NavigationExtras, ActivatedRoute } from '@angular/router';
 import { StorageService } from '../../services/storage.service';
 import { PostService } from '../../services/post.service';
+import { FirestoreService } from '../../services/firestore.service';
 
 @Component({
   selector: 'app-forgot',
@@ -10,7 +11,6 @@ import { PostService } from '../../services/post.service';
   styleUrls: ['./forgot.page.scss'],
 })
 export class ForgotPage implements OnInit {
-
   newCon;
   confirma;
   usuarios;
@@ -19,8 +19,9 @@ export class ForgotPage implements OnInit {
     private router: Router,
     private actRoute: ActivatedRoute,
     private service: StorageService,
-    private ps: PostService) {
-    this.ps.getPosts('usuarios').subscribe(res=>this.usuarios=res);
+    private fs: FirestoreService) {
+    this.fs.readCollection('usuarios/').subscribe(res=>this.usuarios=res);
+
     this.actRoute.queryParams.subscribe(params => {
       if (this.router.getCurrentNavigation().extras.state) {
         this.user = this.router.getCurrentNavigation().extras.state.user;
@@ -32,16 +33,13 @@ export class ForgotPage implements OnInit {
   async recuperar() {
     if (this.newCon === this.confirma) {
       //cambiar la contraseña
-      this.user.attributes.password = this.newCon;
+      this.user.password = this.newCon;
 
       //lo elimino del storage
       this.service.eliminar(this.newCon);
+      this.fs.updateDoc('usuarios/', this.user.sesion, this.user);
 
-      //lo actualizo en la api
-      this.ps.updatePost('usuarios', this.user.id, {data:this.user.attributes});
-
-      //y en su lugar, guardo al que tengo en la variable
-      await this.service.guardar(this.user.attributes.sesion, this.user);
+      await this.service.guardar(this.user.sesion, this.user);
 
       const toast = await this.toastCtrl.create({
         message: 'Contraseñas reestablecida',

@@ -1,25 +1,31 @@
 <ion-header>
   <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/login"></ion-back-button>
+    </ion-buttons>
     <ion-title>Recuperación de contraseña</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
-  <ion-card ion-text-center>
+<ion-content class="ion-margin">
+  <ion-card>
     <ion-card-content>
-      <form #formForgot="ngForm" (ngSubmit)="recuperar()">
+      <form #formForgot="ngForm" class="ion-margin" (ngSubmit)="recuperar()">
         <ion-item>
           <ion-label position="floating">Ingresa tu nueva contraseña</ion-label>
-          <ion-input type="password" [(ngModel)]="newCon" name="contrasena" placeholder="Contraseña..." required></ion-input>
+          <ion-input type="password" [(ngModel)]="newCon" name="contrasena" placeholder="Contraseña..." required>
+          </ion-input>
         </ion-item>
         <ion-item>
           <ion-label position="floating">Confirmar contraseña</ion-label>
-          <ion-input type="password" [(ngModel)]="confirma" name="conContrasena" placeholder="Confirmación contraseña..." required></ion-input>
+          <ion-input type="password" [(ngModel)]="confirma" name="conContrasena"
+            placeholder="Confirmación contraseña..." required></ion-input>
         </ion-item>
 
-        <ion-button class="ion-padding" expand="block" fill="solid" shape="round" type="submit"[disabled]="formForgot.invalid">
-        Ingresar
-      </ion-button>
+        <ion-button class="ion-padding" expand="block" fill="solid" shape="round" type="submit"
+          [disabled]="formForgot.invalid">
+          Ingresar
+        </ion-button>
 
       </form>
     </ion-card-content>

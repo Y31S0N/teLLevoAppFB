@@ -9,14 +9,8 @@
 </ion-header>
 
 <ion-content>
-  <h4 class="ion-margin">Información del viaje</h4>
   <ion-card class="ion-margin">
-    <ion-item *ngIf="rol === 'pasajero'">
-      <h6>Username: {{username}}</h6>
-    </ion-item>
-    <ion-item>
-      <h6>Conductor: {{nombre |titlecase}} {{apaterno|titlecase}} {{amaterno|titlecase}}</h6>
-    </ion-item>
+    <h5 class="ion-margin">Información del viaje</h5>
     <ion-item>
       <h6>Destino: {{destino}}</h6>
     </ion-item>
@@ -24,7 +18,7 @@
       <h6>Costo: ${{costo}}</h6>
     </ion-item>
     <ion-item>
-      <h6>Método de pago preferente: {{pago | titlecase }}</h6>
+      <h6>Método de pago preferente: {{pago | titlecase}}</h6>
     </ion-item>
     <ion-item>
       <h6>Fecha salida: {{fecha}}</h6>
@@ -32,12 +26,42 @@
     <ion-item>
       <h6>Hora salida: {{hora}}</h6>
     </ion-item>
+    <ion-item *ngIf="rol === 'pasajero'">
+      <h6>Username: {{username}}</h6>
+    </ion-item>
+    <ion-item *ngIf="rol === 'pasajero'">
+      <h6>Conductor: {{nombre |titlecase}} {{apaterno|titlecase}} {{amaterno|titlecase}}</h6>
+    </ion-item>
     <ion-item>
-      <h6>Comentario del conductor: {{comentario}}</h6>
+      <h6 *ngIf="rol === 'pasajero'">Comentario del conductor: {{comentario}}</h6>
+      <h6 *ngIf="rol === 'conductor'">Comentario: {{comentario}}</h6>
     </ion-item>
   </ion-card>
-  
-  <ion-button class="ion-margin" *ngIf="rol === 'pasajero'" (click)="intentartomarViaje()" expand="block" fill="clear" shape="round">
+
+  <ion-card class="ion-margin" *ngIf="pasajeros.length > 0">
+    <h5 class="ion-margin">Pasajeros</h5>
+    <ion-list *ngFor="let i of pasajeros">
+      <ion-item>
+        <ion-label>
+          <h2>Username: {{i.username}}</h2>
+          <h2>Nombre: {{i.nombre}} {{i.apaterno}} {{i.amaterno}}</h2>
+          <h2>Correo: {{i.correo}}</h2>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+  </ion-card>
+
+  <div *ngIf="pasajeros.length === 0 && rol==='conductor'">
+    <ion-card id="pasajeros" class="ion-margin">
+      <h5 class="ion-margin">Pasajeros</h5>
+    </ion-card>
+    <ion-card class="ion-margin" id="claro">
+      <h5 class="ion-margin" style="color: black;">No se encontraron pasajeros, este viaje no debería estar aquí</h5>
+    </ion-card>
+  </div>
+
+  <ion-button class="ion-margin" *ngIf="rol === 'pasajero'" (click)="intentartomarViaje()" expand="block" fill="clear"
+    shape="round">
     Tomar Viaje
   </ion-button>
 </ion-content>

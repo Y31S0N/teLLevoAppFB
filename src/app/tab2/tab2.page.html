@@ -5,7 +5,7 @@
 </ion-header>
 
 <ng-container *ngIf="rol === 'conductor'">
-  <ion-content *ngIf="viaje2 !== undefined && viaje2.visible === true">
+  <ion-content *ngIf="viaje !== undefined && viaje.visible === true">
     <ion-card>
       <h5 class="ion-margin">Información del viaje</h5>
       <ion-item>
@@ -30,7 +30,7 @@
 
 
   
-    <ion-card *ngIf="pasajeros">
+    <ion-card *ngIf="pasajeros.length > 0">
       <h5 class="ion-margin">Pasajeros</h5>
       <ion-list *ngFor="let i of pasajeros">
         <ion-item>
@@ -68,7 +68,7 @@
     </div>
   </ion-content>
 
-  <ion-content *ngIf="viaje2 === undefined">
+  <ion-content *ngIf="viaje === undefined">
     <ion-card>
       <h5 class="ion-margin">
         No has programado ningún viaje...
@@ -84,11 +84,9 @@
   </ion-content>
 </ng-container>
 
-
-
 <ng-container *ngIf="rol === 'pasajero'">
   <ion-content>
-    <ion-card *ngIf="viaje2 !== undefined">
+    <ion-card *ngIf="viaje !== undefined">
       <h5 class="ion-margin">Información del viaje</h5>
       <ion-item>
         <p>Destino: {{destino}}</p>
@@ -116,7 +114,12 @@
       </ion-item>
     </ion-card>
     
-    <ion-card *ngIf="viaje2 === undefined">
+    <div class="centrado" *ngIf="viaje">
+      <ion-button (click)="salirViaje()" fill="clear" shape="round">
+        Salir del viaje
+      </ion-button>
+    </div>
+    <ion-card *ngIf="viaje === undefined">
       <h5 class="ion-margin">{{msg}}...</h5>
     </ion-card>
   </ion-content>

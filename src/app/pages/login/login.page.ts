@@ -29,7 +29,7 @@ export class LoginPage implements OnInit {
     const usr = await this.verificar();
     if (await usr !== undefined) {
       await this.service.guardar('sesion', usr.sesion);
-      await this.service.guardar(usr.sesion, usr);
+      await this.service.guardar('usuario', usr);
       const toast = await this.toastCtrl.create({
         message: 'Bievenid@ de vuelta ' + this.usuario.username,
         duration: 2000
@@ -59,12 +59,14 @@ export class LoginPage implements OnInit {
           const toast = await this.toastCtrl.create({
             message: 'Hola ' + this.usuario.username,
             duration: 3000
-          });toast.present();
+          });
+          toast.present();
           const navi: NavigationExtras = {
             state: {
               user: usr,
             }
-          };this.router.navigate(['./forgot'], navi);
+          };
+          this.router.navigate(['forgot'], navi);
         }
       } else {
         const toast = await this.toastCtrl.create({

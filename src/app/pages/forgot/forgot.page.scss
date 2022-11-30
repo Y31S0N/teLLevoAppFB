@@ -18,11 +18,14 @@ ion-button{
 }
 
 ion-card {
-    --background: white;
+    --background: #8BB8E8;
 }
 .centrado{
     text-align: center;
 }
 ion-title {
     --color: #eeeeee;
+    padding-left: 0;
+}ion-back-button{
+    color: #eeeeee;
 }

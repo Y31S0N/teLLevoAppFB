@@ -11,18 +11,12 @@
   <ion-card>
     <form #formViaje="ngForm" id="formu" (ngSubmit)="submit()">
       <ion-list>
+        
         <h5 id="titleDestino" class="ion-margin title">Selecciona el destino</h5>
-<!-- Esto de acá provoca que el geocoder no se vea completamente -->
-        <!-- <ion-grid>
-          <ion-row> --> 
-            <!-- <ion-col sizeXs="12" sizeSm="10" sizeMd="7" sizeLg="6" sizeXl="5"> -->
-              <div class="envoltura ion-margin">
-                <div id="idGeocoder" class="ion-margin" #geocoder></div>
-                <div id="idMap" #mapa class="ion-margin mapa"></div>
-              </div>
-            <!-- </ion-col> -->
-          <!-- </ion-row>
-        </ion-grid> -->
+        <div class="envoltura ion-margin">
+          <div id="idGeocoder" class="ion-margin" #geocoder></div>
+          <div id="idMap" #mapa class="ion-margin mapa"></div>
+        </div>
 
         <h4 class="ion-margin title">Selecciona hora y fecha de salida</h4>
         <ion-item>
@@ -36,7 +30,7 @@
           </ion-label>
           <ion-input [(ngModel)]="viaje.costo" name="costo" required type="text"></ion-input>
         </ion-item>
-        <!-- ************************************************************************ -->
+        
         <ion-item>
           <ion-select interface="action-sheet" mode="ios" id="owo2" [(ngModel)]="viaje.pago" name="pago" color="black"
             placeholder="Método de pago preferente" required>
@@ -44,7 +38,7 @@
             <ion-select-option value="transferencia">Transferencia</ion-select-option>
           </ion-select>
         </ion-item>
-        <!-- ************************************************************************ -->
+        
 
         <ion-item>
           <ion-label position="floating"><span>Comentario(opcional)</span>

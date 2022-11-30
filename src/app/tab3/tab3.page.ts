@@ -113,7 +113,7 @@ irHistorial(){
     }else{
       let msg: string;
       if(this.user.rol === 'pasajero'){
-        msg='Actualemente estás en un viaje';
+        msg='Actualmente estás en un viaje';
       }else if(this.user.rol === 'conductor'){
         msg='Tienes un viaje programado';
       }
@@ -139,11 +139,11 @@ irHistorial(){
     if(this.user.rol === 'pasajero'){
       //verifica que su id no esté en ninguna lista de pasajeros(de viajes)
       for await (const i of this.viajes) {
-        if(i.pasajeros === null || i.pasajeros === undefined){
+        if(i.pasajeros.length ===0){
           continue;
         }
-        for (const j of i.pasajeros) {
-          if(j === this.user.sesion){
+        for (const j of i.pasajeros){
+          if(j === this.user.sesion && i.disponible){
             doTrip = false;
           }
         }
@@ -151,7 +151,7 @@ irHistorial(){
     }else if(this.user.rol === 'conductor'){
       for await (const i of this.viajes){
         if(this.user.sesion === i.idConductor){//el usuario ha hecho viajes
-          if(i.disponible === true){//el usuario tiene un viaje en curso
+          if(i.disponible){//el usuario tiene un viaje en curso
             doTrip = false;
           }
         }
