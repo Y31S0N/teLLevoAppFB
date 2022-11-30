@@ -47,11 +47,10 @@ export class Tab2Page implements ViewWillEnter {
   }
   async cargarDatos(){
     this.user = await this.service.gett('usuario');
-    // this.ses = await this.service.getSinSes('sesion');
+    this.viaje=this.getViajeConductor();
     this.rol = this.user.rol;
-    if (this.rol === 'conductor') {
-      const viaje = await this.service.gett('viaje');
-      console.log(viaje);
+    if (this.rol === 'conductor'){
+      const viaje = this.viaje;
       if (viaje !== undefined && viaje !== null) {
         this.viaje=viaje;
         this.pasajeros = [];
@@ -101,6 +100,7 @@ export class Tab2Page implements ViewWillEnter {
     for (const i of this.viajes) {
       if (i.idConductor !== undefined && i.visible === true) {
         if(i.idConductor === this.user.sesion){
+          this.service.guardar('viaje',i);
           return i;
         }
       }
@@ -118,6 +118,7 @@ export class Tab2Page implements ViewWillEnter {
         for (const j of i.pasajeros){
           //SI EL SESION DEL PASAJERO, ES EL MISMO DEL USUARIO ACTUAL Y, EL VIAJE ESTÁ VISIBLE
           if (j === this.user.sesion && i.visible === true) {
+            await this.service.guardar('viaje', i);
             return i;
           }
         }

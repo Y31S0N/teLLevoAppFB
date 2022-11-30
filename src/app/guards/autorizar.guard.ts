@@ -11,7 +11,7 @@ export class AutorizarGuard implements CanActivate {
   constructor(private service: StorageService, private router: Router) {}
 
   async auth(){
-    const usr = await this.service.getSinSes('sesion');
+    const usr = await this.service.gett('usuario');
     if(usr != null){
         return true;
     }else{

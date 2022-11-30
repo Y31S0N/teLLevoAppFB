@@ -26,6 +26,10 @@ export class Tab1Page implements ViewWillEnter {
       this.cargarDatos();
     }, 1200);
   }
+  ionViewWillLeave(){
+    this.listaViajes = [];
+    this.historialCon = [];
+  }
   async cargarDatos(){
     this.user = await this.service.gett('usuario');
     console.log(this.user);

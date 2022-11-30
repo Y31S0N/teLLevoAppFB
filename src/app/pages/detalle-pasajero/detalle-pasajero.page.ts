@@ -28,10 +28,10 @@ export class DetallePasajeroPage implements OnInit {
     //guarda el pasajero en la lista
     const res = await this.guardarPasajeroEnViaje();
     //PASAJERO DE LA SESIÓN ACTUAL
-    const pasajero = await this.service.gett();
+    const pasajero = await this.service.gett('usuario');
     this.rol = pasajero[0].rol;
 
-    const viaje = await this.service.getSinSes(this.perId);
+    const viaje = await this.service.gett('viaje');
 
     this.comentario = viaje[0].comentario;
     this.costo = viaje[0].costo;
@@ -52,9 +52,9 @@ export class DetallePasajeroPage implements OnInit {
   }
   async guardarPasajeroEnViaje(){
     //PASAJERO DE LA SESIÓN ACTUAL
-    const pasajero = await this.service.gett();
+    const pasajero = await this.service.gett('usuario');
     //VIAJE EN CUESTIÓN
-    const viaje = await this.service.getSinSes(this.perId);
+    const viaje = await this.service.gett('viaje');
     this.viajeActual = await viaje;
     (this.viajeActual[0].pasajeros).push(pasajero[0]);
     return this.viajeActual;

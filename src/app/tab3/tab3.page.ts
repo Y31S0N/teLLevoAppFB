@@ -9,12 +9,12 @@ import { FirestoreService } from '../services/firestore.service';
   templateUrl: 'tab3.page.html',
   styleUrls: ['tab3.page.scss']
 })
-export class Tab3Page implements ViewWillEnter{
+export class Tab3Page implements ViewWillEnter {
   usuario = {
     nombre: '',
-    apaterno:'',
-    amaterno:'',
-    username:'',
+    apaterno: '',
+    amaterno: '',
+    username: '',
     correo: '',
     rol: '',
     auto: {
@@ -22,30 +22,29 @@ export class Tab3Page implements ViewWillEnter{
       modelo: '',
       patente: '',
       color: '',
-      numAsientos:'',
+      numAsientos: '',
     }
   };
   user;
   ses: string;
   rol: string;
   usuarios;
-  userApi;
   viajes;
   constructor(private router: Router, private toastCtrl: ToastController,
     private service: StorageService, private fs: FirestoreService,
-    private alertCtrl: AlertController){
-      this.fs.readCollection('usuarios/').subscribe(res=>this.usuarios=res);
-      this.fs.readCollection('viajes/').subscribe(res=>this.viajes=res);
-    }
+    private alertCtrl: AlertController) {
+    this.fs.readCollection('usuarios/').subscribe(res => this.usuarios = res);
+    this.fs.readCollection('viajes/').subscribe(res => this.viajes = res);
+  }
 
   ionViewWillEnter() {
     setTimeout(() => {
       this.cargarDatos();
-    }, 1000);
+    }, 1300);
   }
-  async cargarDatos(){
-    this.user = await this.service.gett();
-    this.userApi = await this.getUsuario();
+  async cargarDatos() {
+    this.user = await this.service.gett('usuario');
+    console.log(this.user);
     this.rol = this.user.rol;
     this.usuario.username = this.user.username;
     this.usuario.nombre = this.user.nombre;
@@ -60,30 +59,31 @@ export class Tab3Page implements ViewWillEnter{
     this.usuario.auto.color = this.user.auto.color;
     this.usuario.auto.patente = this.user.auto.patente;
   }
-irHistorial(){
-  this.router.navigate(['/historial']);
-}
-  //acá debo tomar la info del usuario
-  async cerrarSesion(){
+  irHistorial() {
+    this.router.navigate(['/historial']);
+  }
+  async cerrarSesion() {
     const toast = await this.toastCtrl.create({
       message: 'Sesión cerrarda con éxito.',
       duration: 2000
     });
     toast.present();
     this.service.eliminar('sesion');
+    this.service.eliminar('usuario');
+    this.service.eliminar('viaje');
     this.router.navigate(['/login']);
   }
-  async cambiarRol(){
+  async cambiarRol() {
     const toast1 = await this.toastCtrl.create({
       message: 'Cambio de rol exitoso',
       duration: 2000
     });
     // acá tomo al usuario de esta sesión en una variable
-    if(await this.verifSiViaje()){
-      if(this.user.rol === 'pasajero'){
-        if(this.user.auto.marca === ''){
+    if (await this.verifSiViaje()) {
+      if (this.user.rol === 'pasajero') {
+        if (this.user.auto.marca === '') {
           this.router.navigate(['creacion-auto']);
-        }else if(this.user.auto.marca !== ''){
+        } else if (this.user.auto.marca !== '') {
           this.service.eliminar(this.user.sesion);
           this.user.rol = 'conductor';
           await this.service.guardar(this.user.sesion, this.user);
@@ -96,7 +96,7 @@ irHistorial(){
             toast1.present();
           }, 1200);
         }
-      }else if(this.user.rol === 'conductor'){
+      } else if (this.user.rol === 'conductor') {
         //ACÁ HAY QUE CAMBIAR EL ROL SOLAMENTE, EL CONDUCTOR YA TIENE AUTO
         this.service.eliminar(this.user.sesion);
         this.user.rol = 'pasajero';
@@ -110,12 +110,12 @@ irHistorial(){
           toast1.present();
         }, 1200);
       }
-    }else{
+    } else {
       let msg: string;
-      if(this.user.rol === 'pasajero'){
-        msg='Actualmente estás en un viaje';
-      }else if(this.user.rol === 'conductor'){
-        msg='Tienes un viaje programado';
+      if (this.user.rol === 'pasajero') {
+        msg = 'Actualmente estás en un viaje';
+      } else if (this.user.rol === 'conductor') {
+        msg = 'Tienes un viaje programado';
       }
       const alert = await this.alertCtrl.create({
         header: 'Acción denegada',
@@ -127,32 +127,28 @@ irHistorial(){
       await alert.present();
     }
   }
-  getUsuario(){
-    for (const i of this.usuarios) {
-      if(i.sesion === this.user.sesion){
-        return i;
-      }
-    }
-  }
-  async verifSiViaje(){
+  async verifSiViaje() {
     let doTrip = true;
-    if(this.user.rol === 'pasajero'){
+    if (this.user.rol === 'pasajero') {
       //verifica que su id no esté en ninguna lista de pasajeros(de viajes)
       for await (const i of this.viajes) {
-        if(i.pasajeros.length ===0){
+        if (i.pasajeros.length === 0) {
           continue;
         }
-        for (const j of i.pasajeros){
-          if(j === this.user.sesion && i.disponible){
+        for (const j of i.pasajeros) {
+          if (j === this.user.sesion && i.disponible) {
+            console.log('Pasajero, no puede irse');
             doTrip = false;
           }
         }
       }
-    }else if(this.user.rol === 'conductor'){
-      for await (const i of this.viajes){
-        if(this.user.sesion === i.idConductor){//el usuario ha hecho viajes
-          if(i.disponible){//el usuario tiene un viaje en curso
+    } else if (this.user.rol === 'conductor') {
+      for await (const i of this.viajes) {
+        if (this.user.sesion === i.idConductor) {//el usuario ha hecho viajes
+          if (i.disponible) {//el usuario tiene un viaje en curso
+            console.log('Conductor, no puede irse');
             doTrip = false;
+
           }
         }
       }

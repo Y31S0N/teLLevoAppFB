@@ -32,13 +32,12 @@ export class CreacionAutoPage implements ViewWillEnter {
     }, 1300);
   }
   async cargarDatos() {
-    this.user = await this.service.gett();
+    this.user = await this.service.gett('usuario');
     this.userApi = await this.getUser();
     console.log(this.user);
     console.log(this.userApi);
   }
   async onSubmit() {
-    this.user = await this.service.gett();
     this.user.auto = this.auto;
     if (this.validarPatente()) {
       if (this.auto.numAsientos <= 0 || this.auto.numAsientos >= 8) {
