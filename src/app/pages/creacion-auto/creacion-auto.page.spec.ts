@@ -3,7 +3,7 @@ import { IonicModule } from '@ionic/angular';
 
 import { CreacionAutoPage } from './creacion-auto.page';
 
-describe('CreacionAutoPage', () => {
+xdescribe('CreacionAutoPage', () => {
   let component: CreacionAutoPage;
   let fixture: ComponentFixture<CreacionAutoPage>;
 

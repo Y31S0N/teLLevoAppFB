@@ -10,6 +10,7 @@ import { FirestoreService } from '../../services/firestore.service';
   styleUrls: ['./login.page.scss'],
 })
 export class LoginPage implements OnInit {
+  @ViewChild('miform') form: any;
   usuario = {
     username: '',
     password: '',

@@ -30,10 +30,6 @@ export class DetalleViajePage implements ViewWillEnter {
     this.viajeId = this.actRoute.snapshot.paramMap.get('id');
     this.pasajero = await this.service.gett('usuario');
     this.rol = this.pasajero.rol;
-
-    console.log(this.viajeId);
-    console.log(this.pasajero);
-    console.log(this.rol);
     const viaje = this.getViaje();
     this.comentario = viaje.comentario;
     this.costo = viaje.costo;
@@ -122,7 +118,6 @@ export class DetalleViajePage implements ViewWillEnter {
   getPasajeros() {
     this.pasajeros=[];
     const viaje = this.getViaje();
-    console.log(viaje.pasajeros);
     for (const i of this.usuarios) {
       for (const j of viaje.pasajeros) {
         if(j === i.sesion){

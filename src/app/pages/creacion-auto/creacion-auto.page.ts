@@ -34,8 +34,6 @@ export class CreacionAutoPage implements ViewWillEnter {
   async cargarDatos() {
     this.user = await this.service.gett('usuario');
     this.userApi = await this.getUser();
-    console.log(this.user);
-    console.log(this.userApi);
   }
   async onSubmit() {
     this.user.auto = this.auto;
@@ -48,10 +46,9 @@ export class CreacionAutoPage implements ViewWillEnter {
       } else {
         this.service.eliminar(this.user.sesion);
         this.user.rol = 'conductor';
-        await this.service.guardar(this.user.sesion, this.user);
+        await this.service.guardar('usuario', this.user);
         this.fs.updateDoc('usuarios/', this.userApi.sesion, this.user);
         this.router.navigate(['tabs/']);
-        console.log('Tudo bem');
       }
     } else {
       const alert = await this.alertCtrl.create({

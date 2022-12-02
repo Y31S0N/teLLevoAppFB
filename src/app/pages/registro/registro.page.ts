@@ -43,10 +43,9 @@ export class RegistroPage implements OnInit {
         toast.present();
       }
       const exp = /[a-z]+\.[a-z]+@duocuc\.cl/;
-      //validación del correo
       if (exp.test(this.usuario.correo)) {
         if (this.usuario.rol === 'conductor') {
-          if(this.validarPatente()){
+          if (this.validarPatente()) {
             if (this.auto.numAsientos <= 0 || this.auto.numAsientos >= 8) {
               const toast = await this.toastCtrl.create({
                 message: 'N° de asientos inválidos(1 - 7)',
@@ -70,7 +69,7 @@ export class RegistroPage implements OnInit {
               await toast.present();
               this.router.navigate(['tabs'], navi);
             }
-          }else{
+          } else {
             const alert = await this.alertCtrl.create({
               header: 'Formato inválido',
               message: 'Respeta el formato de patentes (ABCD12 ó abcd12)',

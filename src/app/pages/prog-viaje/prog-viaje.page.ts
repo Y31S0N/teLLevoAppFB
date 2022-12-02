@@ -1,22 +1,22 @@
-import { Component, AfterViewInit, ViewChild, ElementRef, OnInit } from '@angular/core';
+import { Component, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
 import { Router } from '@angular/router';
 
 import * as mapboxgl from 'mapbox-gl';
 import { Map, Marker } from 'mapbox-gl';
 import * as MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
 
-import { AlertController, ToastController } from '@ionic/angular';
+import { AlertController } from '@ionic/angular';
 import { StorageService } from '../../services/storage.service';
 import { nanoid } from 'nanoid';
-import { PostService } from '../../services/post.service';
 import { Viaje } from '../../interfaces/viaje';
 import { FirestoreService } from '../../services/firestore.service';
+
 @Component({
   selector: 'app-prog-viaje',
   templateUrl: './prog-viaje.page.html',
   styleUrls: ['./prog-viaje.page.scss'],
 })
-export class ProgViajePage implements OnInit {
+export class ProgViajePage implements AfterViewInit {
   @ViewChild('mapa') mapaGG!: ElementRef;
   start = [-73.064083, -36.794719];
 
@@ -34,20 +34,19 @@ export class ProgViajePage implements OnInit {
     nAsientos: null,
     visible: true
   };
-  rol: string;
-  idViaje: string;
-  user;
-  valorFecha;
-  constructor(private alertCtrl: AlertController, private router: Router,
-    private service: StorageService, private fs: FirestoreService){}
+  rol: string; idViaje: string; user;
+  fHoy; tHoy; fElec; tElec; msg;
 
-  async ngOnInit() {
+  constructor(private alertCtrl: AlertController, private router: Router,
+    private service: StorageService, private fs: FirestoreService) { }
+
+  async ngAfterViewInit() {
     this.viaje.comentario = '';
     this.viaje.pago = null;
     this.viaje.costo = 500;
     //CREO EL MAPA
-    const limites=[
-      [-73.244978, -37.148823],[-72.251465, -36.523733]
+    const limites = [
+      [-73.244978, -37.148823], [-72.251465, -36.523733]
     ];
     const mapa = new Map({
       container: this.mapaGG.nativeElement,
@@ -60,10 +59,10 @@ export class ProgViajePage implements OnInit {
     const geoco = new MapboxGeocoder({
       accessToken: mapboxgl.accessToken,
       mapboxgl,
-      //acá solo se limita a Chile
+
       countries: 'cl',
       //esto limitaría la búsqueda de lugares externos
-      bbox: [-73.244978, -37.148823,-72.251465, -36.523733]
+      bbox: [-73.244978, -37.148823, -72.251465, -36.523733]
     });
     // LE AÑADO EL GEOCODER AL MAPA
     mapa.addControl(geoco);
@@ -77,15 +76,15 @@ export class ProgViajePage implements OnInit {
     geoco.clear();
   }
   async submit() {
-    if(this.viaje.destino === '' || this.viaje.destino === ' '){
-        const alert = await this.alertCtrl.create({
-          header: 'Alerta',
-          subHeader: 'Introduzca un destino',
-          buttons: ['OK']
-        });
-        await alert.present();
-    }else{
-      if(isNaN(this.viaje.costo) || !(this.viaje.costo >= 500 && this.viaje.costo <= 15000)){
+    if (this.viaje.destino === '' || this.viaje.destino === ' ') {
+      const alert = await this.alertCtrl.create({
+        header: 'Alerta',
+        subHeader: 'Introduzca un destino',
+        buttons: ['OK']
+      });
+      await alert.present();
+    } else {
+      if (isNaN(this.viaje.costo) || !(this.viaje.costo >= 500 && this.viaje.costo <= 15000)) {
         const alert = await this.alertCtrl.create({
           header: 'Alto ahí!',
           subHeader: 'Costo inválido',
@@ -93,25 +92,31 @@ export class ProgViajePage implements OnInit {
           buttons: ['OK']
         });
         await alert.present();
-      }else{
-        this.user = await this.service.gett('usuario');
-        this.viaje.idConductor = this.user.sesion;
-        //ACÁ LA IDEA ES ALMACENAR LA CANTIDAD DE ASIENTOS QUE TIENE EL AUTO DEL CONDUCTOR ACTUAL
-        this.viaje.nAsientos = this.user.auto.numAsientos;
-        this.idViaje = nanoid(20);
-        this.viaje.ide = this.idViaje;
-        //guardar viaje
-        await this.fs.createDoc('viajes/', this.idViaje, this.viaje);
-        await this.service.guardar('viaje', this.viaje);
-        const alert = await this.alertCtrl.create({
-          header: 'Viaje programado!',
-          message: 'Ahora... a esperar',
-          buttons: [{
-            text: 'Ok',
-            role: 'confirm'
-          }],
-        }); await alert.present();
-        this.router.navigate(['tabs/tab2']);
+      } else {
+        if (this.validarFecha()) {
+          this.user = await this.service.gett('usuario');
+          this.viaje.idConductor = this.user.sesion;
+          //ACÁ LA IDEA ES ALMACENAR LA CANTIDAD DE ASIENTOS QUE TIENE EL AUTO DEL CONDUCTOR ACTUAL
+          this.viaje.nAsientos = this.user.auto.numAsientos;
+          this.idViaje = nanoid(20);
+          this.viaje.fecha = this.fElec;
+          this.viaje.hora = this.tHoy;
+          this.viaje.ide = this.idViaje;
+          if(this.viaje.comentario===''){
+            this.viaje.comentario='Sin comentarios';
+          }
+          await this.fs.createDoc('viajes/', this.idViaje, this.viaje);
+          console.log('Se creó en firebase');
+          await this.service.guardar('viaje', this.viaje);
+          const alert = await this.alertCtrl.create({
+            header: 'Viaje programado!',
+            message: 'Ahora... a esperar',
+            buttons: ['ok'],
+          }); await alert.present();
+          this.router.navigate(['tabs/tab2']);
+        }else{
+          await this.alerta();
+        }
       }
     }
     //acá va la validación del input del geocoder
@@ -120,39 +125,46 @@ export class ProgViajePage implements OnInit {
     new Marker({
     }).setLngLat([lon, lat]).setPopup(pop).addTo(mapa);
   }
-  async obtenFecha(event){
+  async obtenFecha(event) {
     const hoy = new Date();
-    const fHoy = hoy.toLocaleDateString();
-    const tHoy = hoy.toLocaleTimeString();
-    const fecha = new Date(event.detail.value);
-
-    if(fecha.toLocaleDateString() < fHoy){
-      const alert = await this.alertCtrl.create({
-        header: 'Cuidado!',
-        subHeader: 'Los viajes en el tiempo no son posibles... aún',
-        message: 'No puedes programar viajes para días anteriores',
-        buttons: ['OK']
-      });
-      await alert.present();
-      this.valorFecha = hoy.toISOString();
-      return;
-    }else{//si llegó acá, es porque el día, es HOY, ó días después
-      if(fecha.toLocaleDateString() === fHoy && fecha.toLocaleTimeString() < tHoy){
-        const alerta = await this.alertCtrl.create({
-          header: 'Cuidado!',
-          subHeader: 'Si el viaje es para hoy...',
-          message: 'Intenta programarlo para una hora posterior a la actual',
-          buttons: ['OK']
-        });
-        await alerta.present();
-        setTimeout(()=>{
-          this.valorFecha = hoy.toISOString();
-        },200);
-        return;
+    this.fHoy = hoy.toLocaleDateString();
+    this.tHoy = hoy.toLocaleTimeString();
+    const elec = new Date(event.detail.value);
+    this.fElec = elec.toLocaleDateString();
+    this.tElec = elec.toLocaleTimeString();
+  }
+  async alerta(){
+    const alert = await this.alertCtrl.create({
+      header: 'Cuidado',
+      subHeader: this.msg,
+      buttons: ['OK']
+    });
+    await alert.present();
+  }
+  validarFecha(){
+    this.msg='';
+    if(this.fHoy.substr(6, 4) <= this.fElec.substr(6, 4)){//año
+      if(this.fHoy.substr(6, 4) === this.fElec.substr(6, 4)){
+        if(this.fElec.substr(3,2) < this.fHoy.substr(3, 2)){
+          this.msg='No puedes realizar viajes para meses pasados';
+          return false;
+        }else{
+          if(this.fElec.substr(0, 2) >= this.fHoy.substr(0, 2)){
+            if(this.fElec.substr(0, 2) === this.fHoy.substr(0, 2)){
+              if(this.tElec.substr(0, 5) > this.tHoy.substr(0, 5)){
+                return true;
+              }else if(this.tElec.substr(0, 5) <= this.tHoy.substr(0, 5)){
+                this.msg = 'Los viajes se deben realizar con mínimo 10 minutos de anticipación';
+                return false;
+              }
+            }
+          }
+        }
       }else{
-        this.viaje.fecha = fecha.toLocaleDateString();
-        this.viaje.hora = fecha.toLocaleTimeString();
       }
+    }else{
+      this.msg = 'Mo se pueden hacer viajes para años anteriores';
+      return false;
     }
   }
 }
