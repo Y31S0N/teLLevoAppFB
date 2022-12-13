@@ -106,7 +106,6 @@ export class ProgViajePage implements AfterViewInit {
             this.viaje.comentario='Sin comentarios';
           }
           await this.fs.createDoc('viajes/', this.idViaje, this.viaje);
-          console.log('Se creó en firebase');
           await this.service.guardar('viaje', this.viaje);
           const alert = await this.alertCtrl.create({
             header: 'Viaje programado!',
@@ -144,26 +143,32 @@ export class ProgViajePage implements AfterViewInit {
   validarFecha(){
     this.msg='';
     if(this.fHoy.substr(6, 4) <= this.fElec.substr(6, 4)){//año
-      if(this.fHoy.substr(6, 4) === this.fElec.substr(6, 4)){
-        if(this.fElec.substr(3,2) < this.fHoy.substr(3, 2)){
+      if(this.fHoy.substr(6, 4) === this.fElec.substr(6, 4)){//mismo año
+        if(this.fElec.substr(3,2) < this.fHoy.substr(3, 2)){//mes anterior
           this.msg='No puedes realizar viajes para meses pasados';
           return false;
         }else{
-          if(this.fElec.substr(0, 2) >= this.fHoy.substr(0, 2)){
-            if(this.fElec.substr(0, 2) === this.fHoy.substr(0, 2)){
-              if(this.tElec.substr(0, 5) > this.tHoy.substr(0, 5)){
+          if(this.fElec.substr(0, 2) >= this.fHoy.substr(0, 2)){//día mayor o igual al actual
+            if(this.fElec.substr(0, 2) === this.fHoy.substr(0, 2)){//mismo día
+              if(this.tElec.substr(0, 5) > this.tHoy.substr(0, 5)){//hora mayor a la actual
+                //acá la idea es manejar
                 return true;
               }else if(this.tElec.substr(0, 5) <= this.tHoy.substr(0, 5)){
-                this.msg = 'Los viajes se deben realizar con mínimo 10 minutos de anticipación';
+                this.msg = 'Los viajes se deben realizar con mínimo 1 minuto de anticipación';
                 return false;
               }
             }
+          }else{
+            this.msg='No se pueden realizar viajes para días pasados';
+            return false;
           }
         }
       }else{
+        console.log('Este es para año distinto');
+        return false;
       }
     }else{
-      this.msg = 'Mo se pueden hacer viajes para años anteriores';
+      this.msg = 'No se pueden hacer viajes para años anteriores';
       return false;
     }
   }

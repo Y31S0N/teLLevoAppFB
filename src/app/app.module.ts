@@ -12,11 +12,13 @@ import { HttpClientModule } from '@angular/common/http';
 import { AngularFireModule } from '@angular/fire/compat';
 import { environment } from '../environments/environment';
 import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [AppComponent],
   imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, IonicStorageModule.forRoot(),
-  HttpClientModule, AngularFireModule.initializeApp(environment.firebaseConfig), AngularFirestoreModule],
+  HttpClientModule, AngularFireModule.initializeApp(environment.firebaseConfig), AngularFirestoreModule,
+  FormsModule],
   providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy}],
   bootstrap: [AppComponent],
 })

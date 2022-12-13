@@ -144,22 +144,45 @@ export class Tab2Page implements ViewWillEnter {
     } return true;
   }
   async iniciarViaje() {
-    for await (const i of this.viajes) {
-      if (i.idConductor !== undefined) {
-        if (this.user.sesion === i.idConductor) {
-          const vLimbo = i;
-          vLimbo.disponible = false;
-          //ELIMINAR VIAJE
-          this.service.eliminar(i.ide);
-          this.fs.updateDoc('viajes/', i.ide, i);
-          const toast = await this.toastCtrl.create({
-            message: 'Viaje iniciado',
-            duration: 2000
-          });
-          toast.present();
-          setTimeout(async () => {
-            await this.cargarDatos();
-          }, 1300);
+    if(this.viaje.pasajeros.length === 0){
+      const alert = await this.alertCtrl.create({
+        header: 'Alerta',
+        subHeader: 'Viaje sin pasajeros',
+        message: 'No puedes inicar viaje sin pasajeros',
+        buttons: [{
+          text: 'Seguir esperando',
+          role: 'cancel'
+        },{
+          text: 'Cancelar viaje',
+          handler: () =>{
+            this.viaje.disponible = false;
+            this.viaje.visible = false;
+            this.fs.updateDoc('usuarios', this.viaje.sesion, this.viaje);
+            setTimeout(async () => {
+              await this.cargarDatos();
+            }, 1300);
+          }
+        }]
+      });
+      await alert.present();
+    }else if(this.viaje.pasajeros.length > 0){
+      for await (const i of this.viajes) {
+        if (i.idConductor !== undefined) {
+          if (this.user.sesion === i.idConductor) {
+            const vLimbo = i;
+            vLimbo.disponible = false;
+            //ELIMINAR VIAJE
+            this.service.eliminar(i.ide);
+            this.fs.updateDoc('viajes/', i.ide, i);
+            const toast = await this.toastCtrl.create({
+              message: 'Viaje iniciado',
+              duration: 2000
+            });
+            toast.present();
+            setTimeout(async () => {
+              await this.cargarDatos();
+            }, 1300);
+          }
         }
       }
     }
@@ -210,6 +233,9 @@ export class Tab2Page implements ViewWillEnter {
             }
           }
         },
+      },{
+        text: 'No',
+        role: 'cancel'
       }]
     });
     await alert.present();
