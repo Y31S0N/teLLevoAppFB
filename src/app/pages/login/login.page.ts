@@ -14,13 +14,13 @@ export class LoginPage implements OnInit {
   usuario = {
     username: '',
     password: '',
-  };users;usuarios;owos;
+  }; users; usuarios; owos;
   constructor(private router: Router, private toastCtrl: ToastController,
     private alertCtrl: AlertController, private service: StorageService,
     private fs: FirestoreService) {
-    this.fs.readCollection('usuarios/').subscribe(r => { this.usuarios = r;});
+    this.fs.readCollection('usuarios/').subscribe(r => { this.usuarios = r; });
   }
-  async ngOnInit(){
+  async ngOnInit() {
     this.service.eliminar('usuario');
     this.service.eliminar('sesion');
   }
@@ -76,7 +76,7 @@ export class LoginPage implements OnInit {
         const toast = await this.toastCtrl.create({
           message: 'No se encontraron datos',
           duration: 3000
-        });toast.present();
+        }); toast.present();
       }
     }
   }

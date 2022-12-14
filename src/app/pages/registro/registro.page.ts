@@ -27,88 +27,110 @@ export class RegistroPage implements OnInit {
     pass: '', correo: '',
     rol: '', auto: this.auto,
   };
+  usuarios;
   constructor(private router: Router, private toastCtrl: ToastController,
     private alertCtrl: AlertController, private service: StorageService,
-    private fs: FirestoreService) { }
+    private fs: FirestoreService) {
+      this.fs.readCollection('usuarios/').subscribe(r => { this.usuarios = r; });
+    }
 
   ngOnInit() {
   }
   async onSubmit() {
-    if (this.usuario.password === this.usuario.pass) {
-      if (this.usuario.rol === '') {
-        const toast = await this.toastCtrl.create({
-          message: 'Selecciona un rol',
-          duration: 2000
-        });
-        toast.present();
-      }
-      const exp = /[a-z]+\.[a-z]+@duocuc\.cl/;
-      if (exp.test(this.usuario.correo)) {
-        if (this.usuario.rol === 'conductor') {
-          if (this.validarPatente()) {
-            if (this.auto.numAsientos <= 0 || this.auto.numAsientos >= 8) {
-              const toast = await this.toastCtrl.create({
-                message: 'N° de asientos inválidos(1 - 7)',
-                duration: 2000
-              });
-              toast.present();
-            } else {
+    if(this.validarAbc(this.usuario.nombre) && this.validarAbc(this.usuario.apaterno) && this.validarAbc(this.usuario.amaterno)){
+      if(this.validarUsername()){
+        if (this.usuario.password === this.usuario.pass) {
+          if (this.usuario.rol === '') {
+            const toast = await this.toastCtrl.create({
+              message: 'Selecciona un rol',
+              duration: 2000
+            });
+            toast.present();
+          }
+          const exp = /[a-z]+\.[a-z]+@duocuc\.cl/;
+          if (exp.test(this.usuario.correo)) {
+            if (this.usuario.rol === 'conductor') {
+              if (this.validarPatente()) {
+                if (this.auto.numAsientos <= 0 || this.auto.numAsientos >= 8) {
+                  const toast = await this.toastCtrl.create({
+                    message: 'N° de asientos inválidos(1 - 7)',
+                    duration: 2000
+                  });
+                  toast.present();
+                } else {
+                  await this.guardar();
+                  this.service.guardar('sesion', this.usuario.ide);
+                  const navi: NavigationExtras = {
+                    state: {
+                      usr: this.usuario,
+                      ses: this.usuario.ide
+                    }
+                  };
+                  const toast = await this.toastCtrl.create({
+                    message: 'Bienvenido ' + this.usuario.username + '!',
+                    duration: 3000,
+                    position: 'bottom',
+                  });
+                  await toast.present();
+                  this.router.navigate(['tabs'], navi);
+                }
+              } else {
+                const alert = await this.alertCtrl.create({
+                  header: 'Formato inválido',
+                  message: 'Respeta el formato de patentes (ABCD12 ó abcd12)',
+                  buttons: ['OK']
+                });
+                await alert.present();
+              }
+            }
+            else if (this.usuario.rol === 'pasajero') {
               await this.guardar();
-              this.service.guardar('sesion', this.usuario.ide);
+              await this.service.guardar('sesion', this.usuario.ide);
+              const toast = await this.toastCtrl.create({
+                message: 'Bienvenido ' + this.usuario.username + '!',
+                duration: 3000,
+                position: 'bottom',
+              });
               const navi: NavigationExtras = {
                 state: {
                   usr: this.usuario,
                   ses: this.usuario.ide
                 }
               };
-              const toast = await this.toastCtrl.create({
-                message: 'Bienvenido ' + this.usuario.username + '!',
-                duration: 3000,
-                position: 'bottom',
-              });
               await toast.present();
               this.router.navigate(['tabs'], navi);
             }
           } else {
-            const alert = await this.alertCtrl.create({
-              header: 'Formato inválido',
-              message: 'Respeta el formato de patentes (ABCD12 ó abcd12)',
-              buttons: ['OK']
+            const toast = await this.toastCtrl.create({
+              message: 'Correo inválido (nom.apellido@duocuc.cl)',
+              duration: 3000,
+              position: 'bottom',
             });
-            await alert.present();
+            await toast.present();
           }
+        } else if (this.usuario.password !== this.usuario.pass) {
+          const alerta = await this.alertCtrl.create({
+            header: 'Alerta',
+            message: 'Ambas contraseñas deben coincidir',
+          }); await alerta.present();
         }
-        else if (this.usuario.rol === 'pasajero') {
-          await this.guardar();
-          await this.service.guardar('sesion', this.usuario.ide);
-
-          const toast = await this.toastCtrl.create({
-            message: 'Bienvenido ' + this.usuario.username + '!',
-            duration: 3000,
-            position: 'bottom',
-          });
-          const navi: NavigationExtras = {
-            state: {
-              usr: this.usuario,
-              ses: this.usuario.ide
-            }
-          };
-          await toast.present();
-          this.router.navigate(['tabs'], navi);
-        }
-      } else {
-        const toast = await this.toastCtrl.create({
-          message: 'Correo inválido (nom.apellido@duocuc.cl)',
-          duration: 3000,
-          position: 'bottom',
+      }else{
+        const alert = await this.alertCtrl.create({
+          header: 'Cuidado',
+          subHeader: 'Nombre de usuario existente',
+          buttons: ['OK'],
+          mode: 'ios'
         });
-        await toast.present();
+        await alert.present();
       }
-    } else if (this.usuario.password !== this.usuario.pass) {
-      const alerta = await this.alertCtrl.create({
-        header: 'Alerta',
-        message: 'Ambas contraseñas deben coincidir',
-      }); await alerta.present();
+    }else{
+      const alert = await this.alertCtrl.create({
+        header: 'Cuidado',
+        subHeader: 'Nombre y apellidos no contienen números',
+        buttons: ['OK'],
+        mode: 'ios'
+      });
+      await alert.present();
     }
   }
   async guardar() {
@@ -140,5 +162,19 @@ export class RegistroPage implements OnInit {
     } else {
       return false;
     }
+  }
+  validarAbc(alpha: string){
+    for (const i of alpha) {
+      if(!isNaN(Number(i))){
+        return false;
+      }
+    }return true;
+  }
+  validarUsername(){
+    for (const i of this.usuarios) {
+      if(this.usuario.username === i.username){
+        return false;
+      }
+    }return true;
   }
 }
