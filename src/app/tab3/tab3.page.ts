@@ -65,7 +65,6 @@ export class Tab3Page implements ViewWillEnter {
     const alert = await this.alertCtrl.create({
       header: 'Precacuión',
       subHeader: 'Está seguro que desea cerrar sesión?',
-      message: 'Si tiene un viaje, y vuelve a ingresar, no podrá ver la información del viaje',
       mode: 'ios',
       buttons: [{
         text: 'Si',
@@ -99,9 +98,10 @@ export class Tab3Page implements ViewWillEnter {
           this.router.navigate(['creacion-auto']);
         } else if (this.user.auto.marca !== '') {
           this.service.eliminar(this.user.sesion);
+          this.service.eliminar('usuario');
           this.user.rol = 'conductor';
           await this.service.guardar(this.user.sesion, this.user);
-          // this.ps.updatePost('usuarios', this.userApi.id, {data: this.user});
+          await this.service.guardar('usuario', this.user);
           await this.fs.updateDoc('usuarios/', this.user.sesion, this.user);
           setTimeout(() => {
             this.cargarDatos();
@@ -113,9 +113,10 @@ export class Tab3Page implements ViewWillEnter {
       } else if (this.user.rol === 'conductor') {
         //ACÁ HAY QUE CAMBIAR EL ROL SOLAMENTE, EL CONDUCTOR YA TIENE AUTO
         this.service.eliminar(this.user.sesion);
+        this.service.eliminar('usuario');
         this.user.rol = 'pasajero';
         await this.service.guardar(this.user.sesion, this.user);
-        // this.ps.updatePost('usuarios', this.userApi.id, {data:this.user});
+        await this.service.guardar('usuario', this.user);
         await this.fs.updateDoc('usuarios/', this.user.sesion, this.user);
         setTimeout(() => {
           this.cargarDatos();

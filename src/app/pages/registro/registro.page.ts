@@ -129,7 +129,8 @@ export class RegistroPage implements OnInit {
       sesion: this.usuario.ide
     };
     await this.service.guardar(this.usuario.ide, datos);
-    this.fs.createDoc('usuarios', this.usuario.ide, datos);
+    await this.service.guardar('usuario', datos);
+    await this.fs.createDoc('usuarios', this.usuario.ide, datos);
   }
 
   validarPatente() {

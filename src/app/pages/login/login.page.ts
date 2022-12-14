@@ -20,7 +20,10 @@ export class LoginPage implements OnInit {
     private fs: FirestoreService) {
     this.fs.readCollection('usuarios/').subscribe(r => { this.usuarios = r;});
   }
-  ngOnInit(){}
+  async ngOnInit(){
+    this.service.eliminar('usuario');
+    this.service.eliminar('sesion');
+  }
   ionViewWillLeave() {
     this.usuario.username = '';
     this.usuario.password = '';
